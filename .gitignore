@@ -1,0 +1,8 @@
+.cfg
+*.*.swp
+*.svn
+*.git
+
+*README.md
+sublime*
+*.pyc
