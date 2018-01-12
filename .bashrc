@@ -6,6 +6,9 @@
 PS1="\[\033[01;32m\]\u@\h:\[\033[01;34m\]\w $ \[\033[0m\]"
 HISTSIZE=50
 
+export VISUAL=vim
+export EDITOR="$VISUAL"
+
 bind "TAB:menu-complete"
 #bind "set show-all-if-ambiguous on"
 #bind "set menu-complete-display-prefix on"
