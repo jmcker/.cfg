@@ -3,3 +3,4 @@
 	email = jmcker@outlook.com
 [core]
 	autocrlf = true
+    editor = "vim"
