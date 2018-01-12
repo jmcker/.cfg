@@ -2,4 +2,5 @@
 	name = Jack McKernan
 	email = jmcker@outlook.com
 [core]
-	autocrlf = true
+	autocrlf = input
+    editor = "vim"
