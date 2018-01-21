@@ -42,11 +42,6 @@ asm() {
     gcc -std=gnu99 -S -o "$1" "$2"
 }
 
-kommit() {
-    git commit -m "$1" >> .local.git.out
-    #git commit .local.git.out -m "Update .local.git.out"
-}
-
 export PATH=$PATH:$HOME/bin/
 export PATH=$PATH:/home/$USER/bin/
 export PATH=$PATH:$HOME/bin/sublime_text_3
