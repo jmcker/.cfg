@@ -24,15 +24,15 @@ alias bc="bc -l"
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg --work-tree=$HOME'
 cfg config --local status.showUntrackedFiles no
 
-calc() {
-    echo "$1" | bc
-}
-
 alias ls="ls --color=auto"
 alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="lsb_release -a"
+
+calc() {
+    echo "$1" | bc
+}
 
 gcccs() {
     gcc -std=gnu99 -g -Wall -Werror -o "$1" "$2"
@@ -40,6 +40,10 @@ gcccs() {
 
 asm() {
     gcc -std=gnu99 -S -o "$1" "$2"
+}
+
+cdp() {
+    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 251/Projects/P"$1"/P"$1"code/
 }
 
 export PATH=$PATH:$HOME/bin/
