@@ -3,12 +3,16 @@
 # avoid problems with scp -- don't process the rest of the file if non-interactive
 [[ $- != *i* ]] && return
 
-PS1="\[\033[01;32m\]\u@\h:\[\033[01;34m\]\w $ \[\033[0m\]"
-HISTSIZE=50
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    PS1="\[\033[01;32m\]\u@\h\[\033[01;30m\]<ssh>\[\033[01;32m\]:\[\033[01;34m\]\w $ \[\033[0m\]"
+else
+    PS1="\[\033[01;32m\]\u@\h:\[\033[01;34m\]\w $ \[\033[0m\]"
+fi
 
 export LS_COLORS='di=1;34:ow=1;34:'
 export VISUAL=vim
 export EDITOR="$VISUAL"
+export HISTSIZE=50
 
 bind "TAB:menu-complete"
 #bind "set show-all-if-ambiguous on"
