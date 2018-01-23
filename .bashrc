@@ -48,7 +48,7 @@ asm() {
 }
 
 cdp() {
-    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 251/Projects/P"$1"/P"$1"code/
+    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 251/Projects/P"$1"/P"$1"-src/
 }
 
 export PATH=$PATH:$HOME/bin/
