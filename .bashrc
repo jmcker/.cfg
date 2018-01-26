@@ -35,20 +35,33 @@ alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="lsb_release -a"
 
+# Print the result of a simple equation
 calc() {
     echo "$1" | bc
 }
 
+# Compile with required flags for CS240
 gcccs() {
     gcc -std=gnu99 -g -Wall -Werror -o "$1" "$2"
 }
 
+# Compile to assembly
 asm() {
     gcc -std=gnu99 -S -o "$1" "$2"
 }
 
+# Move to CS251 Project directory
 cdp() {
     cd $HOME/OneDrive\ -\ purdue.edu/CS\ 251/Projects/P"$1"/P"$1"-src/
+}
+
+# Start php in interactive mode if no arguments are passed
+php() {
+    if [ "$#" -eq 0 ]; then
+        /usr/bin/php -a
+    else
+        /usr/bin/php "$@" # Pass on all arguments
+    fi
 }
 
 export PATH=$PATH:$HOME/bin/
