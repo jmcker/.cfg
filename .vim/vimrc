@@ -3,10 +3,12 @@
 set nocompatible
 set exrc " Allow project specific vimrcs
 set secure " Prevent unsecure commands in autoloaded vimrcs
-
+filetype on " Prevent spaces when editing Makefiles
+autocmd FileType make set noexpandtab shiftwidth=4 softtabstop=0
 
 " UI Settings
 "----------------------
+colo elflord
 set t_Co=256
 set background=dark
 set whichwrap+=<,>,h,l,[,]
