@@ -42,3 +42,6 @@ ino {;<CR> {<CR>};<ESC>O
 
 " Auto Pairs settings
 let g:AutoPairsMultilineClose = 0
+
+" Commands
+command CleanW %s/\s\+$//e
