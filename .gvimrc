@@ -28,6 +28,7 @@ set softtabstop=4
 set expandtab
 set autoindent
 set smartindent
+command CleanW %s/\s\+$//e " Trim trailing whitespace
 
 
 " Syntax & Highlighting
@@ -43,5 +44,26 @@ ino {;<CR> {<CR>};<ESC>O
 " Auto Pairs settings
 let g:AutoPairsMultilineClose = 0
 
-" Commands
-command CleanW %s/\s\+$//e
+
+" Navigation
+"----------------------
+nnoremap <C-i> :tabnext<CR> 
+nnoremap <C-u> :tabprevious<CR>
+nnoremap <C-t> :tabnew<CR>
+nnoremap <C-w> :tabclose<CR>
+nnoremap <C-o> :tabe<Space>
+inoremap <C-i> <Esc>:tabnext<CR> 
+inoremap <C-u> <Esc>:tabprevious<CR>
+inoremap <C-t> <Esc>:tabnew<CR>
+inoremap <C-w> <Esc>:tabclose<CR>
+inoremap <C-o> <Esc>:tabe<Space>
+
+" GVim only
+nnoremap <C-tab> :tabnext<CR> 
+nnoremap <C-S-tab> :tabprevious<CR>
+inoremap <C-tab> <Esc>:tabnext<CR>
+inoremap <C-S-tab> <Esc>:tabprevious<CR>
+
+" Open multiple files in tab view
+autocmd VimEnter * tab all
+
