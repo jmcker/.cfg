@@ -47,22 +47,16 @@ let g:AutoPairsMultilineClose = 0
 
 " Navigation
 "----------------------
-nnoremap <C-i> :tabnext<CR> 
-nnoremap <C-u> :tabprevious<CR>
+nnoremap <C-u> :tabnext<CR> 
+nnoremap <C-y> :tabprevious<CR>
 nnoremap <C-t> :tabnew<CR>
 nnoremap <C-w> :tabclose<CR>
 nnoremap <C-o> :tabe<Space>
-inoremap <C-i> <Esc>:tabnext<CR> 
-inoremap <C-u> <Esc>:tabprevious<CR>
+inoremap <C-u> <Esc>:tabnext<CR> 
+inoremap <C-y> <Esc>:tabprevious<CR>
 inoremap <C-t> <Esc>:tabnew<CR>
 inoremap <C-w> <Esc>:tabclose<CR>
 inoremap <C-o> <Esc>:tabe<Space>
-
-" GVim only
-nnoremap <C-tab> :tabnext<CR> 
-nnoremap <C-S-tab> :tabprevious<CR>
-inoremap <C-tab> <Esc>:tabnext<CR>
-inoremap <C-S-tab> <Esc>:tabprevious<CR>
 
 " Open multiple files in tab view
 autocmd VimEnter * tab all
