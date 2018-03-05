@@ -70,3 +70,12 @@ export PATH=$PATH:$HOME/bin/sublime_text_3
 export PATH=$PATH:/opt/qt5.9.2/5.9.2/gcc_64/bin/
 export PATH=$PATH:/opt/qt5.9.2/Tools/QtCreator/bin/
 export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
+
+# Load  operating system specific files
+platform="unkown"
+unamestr=`uname`
+if [[ "$unamestr" == 'Darwin' ]]; then                  # OSX
+    [[ -f ".osx_bashrc" ]] && source .osx_bashrc
+elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
+    [[ -f ".linux_bashrc"  ]] && source .linux_bashrc
+fi
