@@ -33,7 +33,7 @@ alias ls="ls --color=auto"
 alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
-alias version="lsb_release -a"
+alias version="uname -a && lsb_release -a"
 
 # Print the result of a simple equation
 calc() {
