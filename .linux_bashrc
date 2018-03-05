@@ -1,0 +1,4 @@
+# Linux specifc bash configuration
+
+#added by travis gem
+[ -f /mnt/d/jmcker/.travis/travis.sh ] && source /mnt/d/jmcker/.travis/travis.sh

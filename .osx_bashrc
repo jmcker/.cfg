@@ -1,0 +1,3 @@
+# OSX specific bash configuration
+
+alias ls="ls -G"
