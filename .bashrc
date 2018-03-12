@@ -64,6 +64,14 @@ php() {
     fi
 }
 
+pyserv() {
+    python -m SimpleHTTPServer ${1:-8080}
+}
+
+py3serv() {
+    python3 -m SimpleHTTPServer ${1:-8080}
+}
+
 export PATH=$PATH:$HOME/bin/
 export PATH=$PATH:/home/$USER/bin/
 export PATH=$PATH:$HOME/bin/sublime_text_3
