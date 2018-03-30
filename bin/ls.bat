@@ -1,1 +1,2 @@
-dir
+@echo off
+dir /w
