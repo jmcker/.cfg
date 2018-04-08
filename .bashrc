@@ -34,6 +34,7 @@ alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
+alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
 
 # Print the result of a simple equation
 calc() {
