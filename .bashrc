@@ -35,6 +35,7 @@ alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
 alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias gitaddx="git update-index --chmod +x"
 
 # Print the result of a simple equation
 calc() {
@@ -73,15 +74,12 @@ py3serv() {
     python3 -m SimpleHTTPServer ${1:-8080}
 }
 
-export PATH=$PATH:$HOME/bin/
-export PATH=$PATH:/home/$USER/bin/
-export PATH=$PATH:$HOME/bin/sublime_text_3
-export PATH=$PATH:/opt/qt5.9.2/5.9.2/gcc_64/bin/
-export PATH=$PATH:/opt/qt5.9.2/Tools/QtCreator/bin/
+export PATH="$HOME/bin/:$PATH"
+export PATH="/home/$USER/bin/:$PATH"
+export PATH="/usr/local/opt/qt/bin:$PATH"
 export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
 
 # Load  operating system specific files
-platform="unkown"
 unamestr=`uname`
 if [[ "$unamestr" == 'Darwin' ]]; then                  # OSX
     [[ -f ".osx_bashrc" ]] && source .osx_bashrc
