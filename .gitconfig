@@ -5,3 +5,5 @@
 	autocrlf = input
     editor = "vim"
 	excludesfile = /mnt/d/jmcker/.gitignore_global
+[credential]
+	helper = cache
