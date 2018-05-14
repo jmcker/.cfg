@@ -2,3 +2,5 @@
 
 #added by travis gem
 [ -f /mnt/d/jmcker/.travis/travis.sh ] && source /mnt/d/jmcker/.travis/travis.sh
+
+export PATH="$HOME/qt/5.10.1/gcc_64/bin:${PATH}"

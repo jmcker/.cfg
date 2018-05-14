@@ -82,7 +82,7 @@ export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
 # Load  operating system specific files
 unamestr=`uname`
 if [[ "$unamestr" == 'Darwin' ]]; then                  # OSX
-    [[ -f ".osx_bashrc" ]] && source .osx_bashrc
+    [[ -f "$HOME/.osx_bashrc" ]] && source $HOME/.osx_bashrc
 elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
-    [[ -f ".linux_bashrc"  ]] && source .linux_bashrc
+    [[ -f "$HOME/.linux_bashrc"  ]] && source $HOME/.linux_bashrc
 fi
