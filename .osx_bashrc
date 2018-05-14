@@ -1,3 +1,4 @@
 # OSX specific bash configuration
 
 alias ls="ls -G"
+export PATH="/usr/local/opt/qt/bin:$PATH"
