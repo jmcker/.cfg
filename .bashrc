@@ -36,6 +36,7 @@ alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
 alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias gitaddx="git update-index --chmod +x"
+alias cdg="cd `git rev-parse --show-toplevel`"
 
 # Print the result of a simple equation
 calc() {
