@@ -36,7 +36,7 @@ alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
 alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias gitaddx="git update-index --chmod +x"
-alias cdg="cd `git rev-parse --show-toplevel`"
+alias cdg='cd `git rev-parse --show-toplevel`' # single quotes to prevent expansion
 
 # Print the result of a simple equation
 calc() {
@@ -65,6 +65,10 @@ php() {
     else
         /usr/bin/php "$@" # Pass on all arguments
     fi
+}
+
+phpserv() {
+    php -S localhost:${1:-8080}
 }
 
 pyserv() {
