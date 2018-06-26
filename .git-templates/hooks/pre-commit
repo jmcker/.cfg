@@ -1,0 +1,38 @@
+#!/bin/bash
+
+GIT_GLOBAL_EMAIL=`git config --global user.email`
+
+if [[ "$GIT_AUTHOR_EMAIL" == "$GIT_GLOBAL_EMAIL" ]]
+then
+    echo ""
+    echo "You are trying to commit using the global user email: $GIT_GLOBAL_EMAIL"
+    echo ""
+    echo "Please set local repository credentials using:"
+    echo "    git config user.name  'First Last'"
+    echo "    git config user.email 'myemail@gmail.com'"
+    echo ""
+    echo "Or set up a personal .gitconfig for a set of subdirectories as follows:"
+    echo ""
+    echo "APPEND -- ~/.gitconfig"
+    echo "    [includeIf \"gitdir:~/Documents/Name/\"]"
+    echo "        path = ~/Documents/Name/.gitconfig"
+    echo ""
+    echo "CREATE -- ~/Documents/Name/.gitconfig"
+    echo "    [user]"
+    echo "        name = First Last"
+    echo "        email = myemail@gmail.com"
+    echo ""
+    echo "Commit with --no-verify to override this warning."
+    echo "This script is located at ~/.git-templates/hooks/pre-commit"
+    echo ""
+    exit 1
+else
+    echo ""
+    echo "You are committing using:"
+    echo "    Name:  $GIT_AUTHOR_NAME"
+    echo "    Email: $GIT_AUTHOR_EMAIL"
+    echo ""
+    echo "Use git reset HEAD~1 to undo."
+    echo ""
+    exit 0
+fi

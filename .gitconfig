@@ -1,10 +1,11 @@
 [user]
-	name = Jack McKernan
-	email = jmcker@outlook.com
+	useConfigOnly = true
+	name = (none)
+	email = (none)
 [core]
 	autocrlf = input
     editor = "vim"
-	excludesfile = /mnt/d/jmcker/.gitignore_global
+	excludesfile = ~/.gitignore_global
 [credential]
 	helper = cache
 [filter "lfs"]
@@ -12,3 +13,18 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
+#[init] # Will disable committing with the global credentials
+#	templateDir = ~/.git-templates
+
+[includeIf "gitdir:~/Documents/Aneesh/"]
+    path = ~/Documents/Aneesh/.gitconfig
+[includeIf "gitdir:~/Documents/Charlene/"]
+    path = ~/Documents/Charlene/.gitconfig
+[includeIf "gitdir:~/Documents/Davis/"]
+    path = ~/Documents/Davis/.gitconfig
+[includeIf "gitdir:~/Documents/Emanuel/"]
+    path = ~/Documents/Emanuel/.gitconfig
+[includeIf "gitdir:~/Documents/Jack/"]
+    path = ~/Documents/Jack/.gitconfig
+[includeIf "gitdir:~/Documents/Neel/"]
+    path = ~/Documents/Neel/.gitconfig
