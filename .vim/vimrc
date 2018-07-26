@@ -56,7 +56,7 @@ inoremap <C-a> <Esc>ggVG<CR>
 nnoremap <C-u> :tabnext<CR> 
 nnoremap <C-y> :tabprevious<CR>
 nnoremap <C-t> :tabnew<CR>
-nnoremap <C-w> :tabclose<CR>
+nnoremap <expr> <C-w> tabpagenr('$')==1 ? ':q<CR>' : ':tabclose<CR>'
 nnoremap <C-o> :tabe<Space>
 inoremap <C-u> <Esc>:tabnext<CR> 
 inoremap <C-y> <Esc>:tabprevious<CR>
