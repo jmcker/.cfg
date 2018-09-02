@@ -61,7 +61,30 @@ asm() {
 
 # Move to CS251 Project directory
 cdp() {
-    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 251/Projects/P"$1"/P"$1"-src/
+    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 252/Lab\ "$1"/lab"$1"-src/
+}
+
+# Prep ssh-agent for WSL
+start-agent() {
+    if [ ! -z "$(ls ~/.ssh/*.key)" ]; then
+        if [ -z "$(pgrep ssh-agent)" ]; then
+
+            rm -rf /tmp/ssh-*
+            echo "Starting ssh-agent..."
+
+            eval $(ssh-agent)
+            ssh-add ~/.ssh/*.key
+
+        else
+            export SSH_AGENT_PID=$(pgrep ssh-agent)
+            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -name "agent.*")
+        fi
+    fi
+}
+
+# data git via ssh
+gitp() {
+    git "$1" ssh://jmckern@data.cs.purdue.edu:/homes/cs252/sourcecontrol/work/jmckern/"$2"
 }
 
 # Start php in interactive mode if no arguments are passed
@@ -97,3 +120,5 @@ if [[ "$unamestr" == 'Darwin' ]]; then                  # OSX
 elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
     [[ -f "$HOME/.linux_bashrc"  ]] && source $HOME/.linux_bashrc
 fi
+
+start-agent
