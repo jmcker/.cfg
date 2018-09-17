@@ -64,10 +64,11 @@ cdp() {
     cd $HOME/OneDrive\ -\ purdue.edu/CS\ 252/Lab\ "$1"/lab"$1"-src/
 }
 
+
 # Prep ssh-agent for WSL
-start-agent() {
-    if [ ! -z "$(ls ~/.ssh/*.key)" ]; then
-        if [ -z "$(pgrep ssh-agent)" ]; then
+start-ssh-agent() {
+    if [ ! -z "$(ls ~/.ssh/*.key 2>/dev/null)" ]; then
+        if [ -z "$(pgrep ssh-agent -u $USER)" ]; then
 
             rm -rf /tmp/ssh-*
             echo "Starting ssh-agent..."
@@ -76,8 +77,8 @@ start-agent() {
             ssh-add ~/.ssh/*.key
 
         else
-            export SSH_AGENT_PID=$(pgrep ssh-agent)
-            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -name "agent.*")
+            export SSH_AGENT_PID=$(pgrep ssh-agent -u $USER)
+            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user $USER -name "agent.*")
         fi
     fi
 }
@@ -121,4 +122,4 @@ elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
     [[ -f "$HOME/.linux_bashrc"  ]] && source $HOME/.linux_bashrc
 fi
 
-start-agent
+start-ssh-agent
