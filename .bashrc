@@ -70,7 +70,7 @@ start-ssh-agent() {
     if [ ! -z "$(ls ~/.ssh/*.key 2>/dev/null)" ]; then
         if [ -z "$(pgrep ssh-agent -u $USER)" ]; then
 
-            rm -rf /tmp/ssh-*
+            rm -rf /tmp/ssh-* 2>/dev/null
             echo "Starting ssh-agent..."
 
             eval $(ssh-agent)
@@ -78,7 +78,7 @@ start-ssh-agent() {
 
         else
             export SSH_AGENT_PID=$(pgrep ssh-agent -u $USER)
-            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user $USER -name "agent.*")
+            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user $USER -name "agent.*" 2>/dev/null)
         fi
     fi
 }
