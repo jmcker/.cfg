@@ -2,3 +2,8 @@
 
 alias ls="ls -G"
 export PATH="/usr/local/opt/qt/bin:$PATH"
+
+# Git auto-complete when installed via brew
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
