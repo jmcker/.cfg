@@ -39,6 +39,7 @@ alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd `git rev-parse --show-toplevel`' # single quotes to prevent expansion
 alias newb="/mnt/c/Windows/System32/cmd.exe /c 'start bash'"
+alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 
 # Start a Windows program
 win() {
