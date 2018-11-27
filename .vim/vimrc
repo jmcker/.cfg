@@ -13,12 +13,19 @@ set t_Co=256
 set background=dark
 set whichwrap+=<,>,h,l,[,]
 set wildmenu
+set ignorecase
+set smartcase
 set hlsearch
+set incsearch
 
 set cmdheight=2 " Command bar height
 set foldcolumn=0 " Add margin on left
 set number " Show line numbers
+set ruler
 set mouse=a " Enable mouse support for all modes
+set ttymouse=sgr
+
+set pastetoggle=<F11>
 
 
 " Whitespace
@@ -48,8 +55,8 @@ let g:AutoPairsMultilineClose = 0
 
 " Shortcuts
 "----------------------
-nnoremap <C-a> ggVG<CR>
-inoremap <C-a> <Esc>ggVG<CR>
+nnoremap <C-a> gg0VG$<CR>
+inoremap <C-a> <Esc>gg0VG$<CR>
 
 " Navigation
 "----------------------

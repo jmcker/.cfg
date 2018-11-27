@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/mnt/d/jmcker/Documents/Web Development/.idlerc'
+let g:netrw_dirhist_2='/mnt/d/jmcker/Documents/SplitSound/SplitSound-Android/mobile/build'
+let g:netrw_dirhist_3='/mnt/d/jmcker/.travis'
+let g:netrw_dirhist_4='/mnt/d/jmcker/OneDrive - purdue.edu/CS 252/Lab 2/lab2-src/.git'
