@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+#
+# Checkout the changes that are being pushed to this repo.
+# This is used as a deployment tool on servers. 
+#
+# A remote to the server can be added via ssh:
+#     git remote add prod <user>@<hostname>:[port]/~/path/to/repo
+#
+# A push to that remote triggers this checkout to the working 
+# directory and any services relying on the files are updated.
+#
+# The destruction of the working directory is protected by the
+# pre-receive script which checks for modified files.
+#
+# To allow this behavior, you must turn off git's safety check:
+#    git config receive.denyCurrentBranch ignore
+#
+
+# Expand this to full path
+GIT_DIR="$(realpath $GIT_DIR)"
+
+# Checkout the working directory if this isn't a bare repo
+if [ "$(git rev-parse --is-bare-repository)" == "false" ]; then
+    cd ..
+    git reset HEAD --hard
+fi

@@ -8,21 +8,34 @@
 # If any changes are found, the push is rejected.
 #
 
-MODIFIED_COUNT=$(git status -s -uno | wc -l)
+# Expand this to full path
+GIT_DIR="$(realpath $GIT_DIR)"
+
+if [ "$(git rev-parse --is-bare-repository)" == "false" ]; then
+    cd ..
+    MODIFIED_COUNT="$(git status -s -uno | wc -l)"
+else
+    MODIFIED_COUNT="0"
+fi
 
 if [ "$MODIFIED_COUNT" -gt "0" ]; then
+    echo "Modified files: $MODIFIED_COUNT"
+
+    echo
     echo "The working directory of this repository contains unsaved changes."
     echo "Please clear or stash the changes to:"
     
     # Print modified files
-    for line in $(git status -s -uno); do
+    for line in "$(git status -s -uno)"; do
         echo "    $line"
     done
 
     echo "before continuing."
 
+    cd "$GIT_DIR"
     exit 1
 fi
 
+cd "$GIT_DIR"
 exit 0
 
