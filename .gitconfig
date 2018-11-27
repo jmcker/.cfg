@@ -1,21 +1,22 @@
 [user]
-	useConfigOnly = true
-	name = Jack McKernan
-	email = jmcker@outlook.com
+    useConfigOnly = true
+    name = (None)
+    email = (None)
 [core]
-	autocrlf = input
+    autocrlf = input
     editor = "vim"
 	excludesfile = ~/.gitignore_global
+    hooksPath = ~/.git-templates/hooks
 	ignorecase = false
 [credential]
-	helper = cache
+    helper = cache
 [filter "lfs"]
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-#[init] # Will disable committing with the global credentials
-#	templateDir = ~/.git-templates
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+[init] # Will disable committing with the global credentials
+    templateDir = ~/.git-templates
 
 [includeIf "gitdir:~/Documents/Aneesh/"]
     path = ~/Documents/Aneesh/.gitconfig
