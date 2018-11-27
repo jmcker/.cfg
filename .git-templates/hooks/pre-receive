@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+#
+# Make sure there aren't any changes in the working directory.
+# This is used as a safety measure before letting the post-receive
+# hook checkout to the working directory.
+#
+# If any changes are found, the push is rejected.
+#
+
+MODIFIED_COUNT=$(git status -s -uno | wc -l)
+
+if [ "$MODIFIED_COUNT" -gt "0" ]; then
+    echo "The working directory of this repository contains unsaved changes."
+    echo "Please clear or stash the changes to:"
+    
+    # Print modified files
+    for line in $(git status -s -uno); do
+        echo "    $line"
+    done
+
+    echo "before continuing."
+
+    exit 1
+fi
+
+exit 0
+

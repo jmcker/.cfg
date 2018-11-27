@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 GIT_GLOBAL_EMAIL=`git config --global user.email`
 
