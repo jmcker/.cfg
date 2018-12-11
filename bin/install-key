@@ -1,0 +1,299 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+BLUE='\033[1;96m'
+NC='\033[0m' # No color
+
+GITHUB="false"
+USERNAME=""
+TARGETNAME=""
+PORT=""
+NICKNAME=""
+KEYTYPE="ecdsa"
+BITFLAG=" -b 521"
+
+echo
+echo -e "${YELLOW}-------- SSH-key generation, configuration, and installation --------${NC}"
+echo
+
+function help-text {
+    echo "Usage:"
+    echo "    install-key              Use the setup wizard"
+    echo "    install-key -h           Display this message"
+    echo "    install-key -g           GitHub mode - add a key manually or via the GitHub API"
+    echo "    install-key [-x hostname] [-u username] [-p port] [-n host-nickname] [-t key type]"
+    echo
+    echo "Valid key types are those supported by ssh-keygen: dsa | ecdsa | ed25519 | rsa | rsa1"
+    echo "Key type defaults to ecdsa with 521 bits."
+    echo
+}
+
+function key-gen {
+
+    if [ ! -d "$HOME/.ssh" ]; then
+        mkdir $HOME/.ssh
+    fi
+
+    KEY_FILE="${HOME}/.ssh/${NICKNAME:-TARGETNAME}.key"
+
+    echo -e "${YELLOW}-------- Generating ${KEYTYPE} key for ${USERNAME}@${TARGETNAME} --------${NC}"
+    echo "It is highly recommended, albeit not required, that you use a password."
+    echo "You will NOT have to type this password often. Please choose a strong one."
+    echo
+
+    ssh-keygen -t ${KEYTYPE}${BITFLAG} -f "${KEY_FILE}"
+    echo
+}
+
+function add-key {
+
+    if [ -z "$SSH_AGENT_PID" ]; then
+        echo -e "${BLUE}IMPORTANT:${NC}"
+        echo -e "${NC}    Source $HOME/.bashrc or open a new shell to start ssh-agent and test your keys${NC}"
+        echo
+    else
+        echo -e "${BLUE}Adding key to instance of ssh-agent...${NC}"
+        echo
+
+        ssh-add "$KEY_FILE"
+
+        if [ $? -ne 0 ]; then
+            echo
+            echo "There was an issue adding $KEY_FILE to running instance of ssh-agent."
+            echo "You may have to add it manually."
+            echo "Try: ssh-add $KEY_FILE"
+            echo
+        else
+            echo
+            echo "Successfully added $KEY_FILE to ssh-agent with PID $SSH_AGENT_PID"
+        fi
+
+        echo
+    fi
+}
+
+function add-startup-script() {
+
+    # Check if function already exists
+    egrep 'start-ssh-agent' $HOME/.bashrc
+    if [ $? -ne 0 ]; then
+
+echo -e '
+# Inserted by install-key
+start-ssh-agent() {
+    if [ ! -z "$(ls ~/.ssh/*.key 2>/dev/null)" ]; then
+        if [ -z "$(pgrep ssh-agent -u $USER)" ]; then
+
+            rm -rf /tmp/ssh-* 2>/dev/null
+            echo "Starting ssh-agent..."
+
+            eval $(ssh-agent)
+            ssh-add ~/.ssh/*.key
+
+        else
+            export SSH_AGENT_PID=$(pgrep ssh-agent -u $USER)
+            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user $USER -name "agent.*" 2>/dev/null)
+        fi
+    fi
+}
+
+start-ssh-agent
+
+' >> $HOME/.bashrc
+
+        echo
+        echo "Appended auto-start function to $HOME/.bashrc"
+
+    fi
+}
+
+while getopts ":hgx:u:p:n:t" opt; do
+    case ${opt} in
+        h )
+            help-text
+            exit 0
+            ;;
+        g )
+            GITHUB="true"
+            ;;
+        x )
+            TARGETNAME="$OPTARG"
+            ;;
+        u )
+            USERNAME="$OPTARG"
+            ;;
+        p )
+            PORT="$OPTARG"
+            ;;
+        n )
+            NICKNAME="$OPTARG"
+            ;;
+        t )
+            KEYTYPE="$OPTARG"
+            BITFLAG=""
+            ;;
+        \? )
+            echo "Unknown option: -$OPTARG" 1>&2
+            help-text
+            exit 1
+            ;;
+    esac
+done
+
+# GitHub keys do not need to be installed on a remote host
+# Print to stdout so that the user can copy/paste
+if [ "$GITHUB" == "true" ]; then
+
+    echo -e "${YELLOW}-------- Creating SSH key for GitHub --------${NC}"
+    echo
+
+    if [ -z "$USERNAME" ]; then
+        echo "Enter GitHub username:"
+        read USERNAME
+        echo
+    fi
+
+    TARGETNAME="github.com"
+    NICKNAME="github"
+
+    key-gen
+
+    echo
+    echo "-- Enter your GitHub password --"
+    echo "Your password will be used to authenticate to the GitHub API and add the SSH key."
+    echo "If you prefer to do this yourself, leave the password blank."
+    read -s -p "Password: " GITHUB_PASSWORD
+    echo
+
+    if [ ! -z "$GITHUB_PASSWORD" ]; then
+
+        echo
+        echo -e "${BLUE}Adding SSH key to GitHub via GitHub API...${NC}"
+        echo
+
+        curl --fail -u ${USERNAME}:${GITHUB_PASSWORD} --request POST \
+        --data '{"title": "'"install-key-$HOSTNAME"'", "key": "'"`cat ${KEY_FILE}.pub`"'"}' \
+        https://api.github.com/user/keys
+
+        if [ $? -ne 0 ]; then
+            echo
+            echo -e "${RED}ERROR!${NC}"
+            echo "There was an issue adding the key to GitHub."
+            echo "Please proceed manually."
+            echo
+            echo "Press [Enter] to continue."
+
+            # Let manual mode run
+            GITHUB_PASSWORD=""
+
+            read
+        fi
+
+        echo
+
+    fi
+
+    if [ -z "$GITHUB_PASSWORD" ]; then
+
+        echo
+        echo -e "${YELLOW}-------- Public Key --------${NC}"
+
+        # Dump the public key to stdout
+        cat "$KEY_FILE.pub"
+
+        echo
+        echo -e "${BLUE}Paste the public key from above into the 'Key' section of:${NC}"
+        echo -e "    github.com->Settings->SSH and GPG keys->New SSH Key"
+        echo
+
+    fi
+
+    echo "Clone a new repo using: "
+    echo "    git clone git@github.com:/$USERNAME/reponame"
+    echo
+    echo "Switch a repo from HTTP to SSH using:"
+    echo "    git remote set-url origin git@github.com:/$USERNAME/reponame"
+    echo
+
+    # Add startup script to .bashrc
+    add-startup-script
+
+    # Add key to running ssh-agent or prompt user to start a new shell
+    add-key
+
+    exit 0
+
+fi
+
+if [ -z "$USERNAME" ]; then
+    echo "Enter username:"
+    read USERNAME
+    echo
+fi
+
+if [ -z "$TARGETNAME" ]; then
+    echo "Enter hostname:"
+    read TARGETNAME
+    echo
+fi
+
+if [ -z "$PORT" ]; then
+    echo "Enter port (blank for 22):"
+    read PORT
+    echo
+fi
+
+if [ -z "$NICKNAME" ]; then
+    echo "Enter a 'nickname' for the host"
+    echo "(i.e. data for data.cs.purdue.edu)"
+    echo "Usage after nickname: ssh data"
+    read NICKNAME
+    echo
+fi
+
+# Run key-gen function
+key-gen
+
+echo -e "${YELLOW}------- Installing key on remote host -------${NC}"
+echo
+
+ssh-copy-id -i "${KEY_FILE}" ${USERNAME}@${TARGETNAME} -p ${PORT:-22}
+
+# Make sure copy succeeded
+if [ $? -ne 0 ]; then
+    echo
+    echo "There was an issue installing the key to the remote host."
+    echo "Do you have the correct username and port?"
+    exit 1
+fi
+echo
+
+add-startup-script
+
+CONFIG="
+
+Host ${NICKNAME:-TARGETNAME}
+    Hostname ${TARGETNAME}
+    Port ${PORT:-22}
+    User ${USERNAME}
+
+"
+echo -e "$CONFIG" >> $HOME/.ssh/config
+
+# If newly created, will have 666
+# ssh requires 600
+chmod 600 $HOME/.ssh/config
+
+echo "Appended ${NICKNAME:-TARGETNAME} to $HOME/.ssh/config"
+echo "$CONFIG"
+
+echo -e "${YELLOW}------- Installation complete -------${NC}"
+echo
+
+echo "Usage:"
+echo "    ssh ${NICKNAME:-TARGETNAME}"
+echo
+
+# Add key to running ssh-agent or prompt user to start a new shell
+add-key

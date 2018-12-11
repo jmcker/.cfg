@@ -5,9 +5,9 @@
 [core]
     autocrlf = input
     editor = "vim"
-	excludesfile = ~/.gitignore_global
+    excludesfile = ~/.gitignore_global
     #hooksPath = ~/.git-templates/hooks
-	ignorecase = false
+    ignorecase = false
 [credential]
     helper = cache
 [filter "lfs"]
