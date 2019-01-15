@@ -115,6 +115,7 @@ export PATH="$HOME/bin/:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/home/$USER/bin/:$PATH"
 export PATH="/opt/qt5.9.2/5.9.2/gcc_64/bin:$PATH" # Qt on data.cs
+export PATH="$PATH:/p/xinu/bin" # XINU on xinu.cs
 export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
 
 # Load  operating system specific files
