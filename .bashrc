@@ -85,6 +85,12 @@ start-ssh-agent() {
     fi
 }
 
+start-gpg-agent() {
+    export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent:0:1
+    export GPG_TTY=$(tty)
+    gpg-connect-agent /bye || gpg-agent --daemon #&>/dev/null
+}
+
 # data git via ssh
 gitp() {
     git "$1" ssh://jmckern@data.cs.purdue.edu:/homes/cs252/sourcecontrol/work/jmckern/"$2"
@@ -126,4 +132,6 @@ elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
     [[ -f "$HOME/.linux_bashrc"  ]] && source $HOME/.linux_bashrc
 fi
 
+# Configure SSH and GPG agents
 start-ssh-agent
+start-gpg-agent
