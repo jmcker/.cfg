@@ -36,6 +36,7 @@ alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
 alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias json="python -m json.tool"
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd `git rev-parse --show-toplevel`' # single quotes to prevent expansion
 alias newb="/mnt/c/Windows/System32/cmd.exe /c 'start bash'"
