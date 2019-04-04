@@ -1,0 +1,30 @@
+diff --git a/.gitconfig b/.gitconfig
+index eb08d6e..48585c5 100644
+--- a/.gitconfig
++++ b/.gitconfig
+@@ -1,13 +1,13 @@
+ [user]
+     useConfigOnly = true
+-    name = Jack McKernan
+-    email = jmcker@outlook.com
++    name = (none)
++    email = (none)
+     signingkey = BA46B096BBBAAA5B
+ [core]
+     autocrlf = input
+     editor = "vim"
+     excludesfile = ~/.gitignore_global
+-    #hooksPath = ~/.git-templates/hooks
++    hooksPath = ~/.git-templates/hooks
+     ignorecase = false
+ [credential]
+     helper = cache
+@@ -19,7 +19,7 @@
+     smudge = git-lfs smudge -- %f
+     process = git-lfs filter-process
+ [init]
+-    #templateDir = ~/.git-templates
++    templateDir = ~/.git-templates
+ 
+ [includeIf "gitdir:~/Documents/Aneesh/"]
+     path = ~/Documents/Aneesh/.gitconfig
