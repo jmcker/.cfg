@@ -38,7 +38,7 @@ alias version="uname -a && lsb_release -a"
 alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias json="python -m json.tool"
 alias gitaddx="git update-index --chmod +x"
-alias cdg='cd `git rev-parse --show-toplevel`' # single quotes to prevent expansion
+alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb="/mnt/c/Windows/System32/cmd.exe /c 'start bash'"
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 
@@ -64,7 +64,7 @@ asm() {
 
 # Move to CS251 Project directory
 cdp() {
-    cd $HOME/OneDrive\ -\ purdue.edu/CS\ 252/Lab\ "$1"/lab"$1"-src/
+    cd $HOME/OneDrive\ -\ purdue.edu/Archive/CS\ 252/Lab\ "$1"/lab"$1"-src/
 }
 
 
