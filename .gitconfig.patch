@@ -1,8 +1,8 @@
 diff --git a/.gitconfig b/.gitconfig
-index eb08d6e..48585c5 100644
+index eb08d6e..9daf28e 100644
 --- a/.gitconfig
 +++ b/.gitconfig
-@@ -1,13 +1,13 @@
+@@ -1,16 +1,16 @@
  [user]
      useConfigOnly = true
 -    name = Jack McKernan
@@ -18,7 +18,11 @@ index eb08d6e..48585c5 100644
 +    hooksPath = ~/.git-templates/hooks
      ignorecase = false
  [credential]
-     helper = cache
+-    helper = cache
++    #helper = cache
+ [commit]
+     #gpgsign = true
+ [filter "lfs"]
 @@ -19,7 +19,7 @@
      smudge = git-lfs smudge -- %f
      process = git-lfs filter-process
