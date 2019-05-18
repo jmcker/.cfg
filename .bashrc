@@ -27,7 +27,7 @@ alias .vimrc="vim ~/.vim/vimrc"
 alias bc="bc -l"
 
 # Git controls for dotfile repo
-alias cfg='/usr/bin/git --git-dir=$HOME/.cfg --work-tree=$HOME'
+alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME'
 cfg config --local status.showUntrackedFiles no
 
 alias ls="ls --color=auto"
@@ -41,6 +41,12 @@ alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb="/mnt/c/Windows/System32/cmd.exe /c 'start bash'"
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
+
+bashrc() {
+    vim ~/.bashrc
+    source ~/.bashrc
+    echo Sourced ~/.bashrc.
+}
 
 # Start a Windows program
 win() {
@@ -111,11 +117,11 @@ phpserv() {
 }
 
 pyserv() {
-    python -m SimpleHTTPServer ${1:-8080}
+    python2 -m SimpleHTTPServer ${1:-8080}
 }
 
-py3serv() {
-    python3 -m SimpleHTTPServer ${1:-8080}
+pyserv3() {
+    python3 -m http.server ${1:-8080}
 }
 
 export PATH="$HOME/bin/:$PATH"
