@@ -127,16 +127,20 @@ pyserv3() {
 export PATH="$HOME/bin/:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/home/$USER/bin/:$PATH"
-export PATH="/opt/qt5.9.2/5.9.2/gcc_64/bin:$PATH" # Qt on data.cs
+export PATH="/opt/qt/5.9.2/gcc_64/bin:$PATH" # Qt on data.cs
 export PATH="$PATH:/p/xinu/bin" # XINU on xinu.cs
 export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
 
 # Load  operating system specific files
 unamestr=`uname`
-if [[ "$unamestr" == 'Darwin' ]]; then                  # OSX
-    [[ -f "$HOME/.osx_bashrc" ]] && source $HOME/.osx_bashrc
-elif [[ "$unamestr" == 'Linux' ]]; then                 # Linux
-    [[ -f "$HOME/.linux_bashrc"  ]] && source $HOME/.linux_bashrc
+if [ "$unamestr" == 'Darwin' ]; then                  # OSX
+    [ -f "$HOME/.osx_bashrc" ] && source $HOME/.osx_bashrc
+elif [ "$unamestr" == 'Linux' ]; then                 # Linux
+    [ -f "$HOME/.linux_bashrc"  ] && source $HOME/.linux_bashrc
+fi
+
+if [ -f ".workrc" ]; then
+    source $HOME/.workrc
 fi
 
 # Configure SSH and GPG agents
