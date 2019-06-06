@@ -35,7 +35,7 @@ alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
-alias extip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias extip="dig +short myip.opendns.com ANY @resolver1.opendns.com"
 alias json="python -m json.tool"
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
