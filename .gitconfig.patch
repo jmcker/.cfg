@@ -1,15 +1,16 @@
 diff --git a/.gitconfig b/.gitconfig
-index eb08d6e..9daf28e 100644
+index 676ddef..a205a6a 100644
 --- a/.gitconfig
 +++ b/.gitconfig
-@@ -1,16 +1,16 @@
+@@ -1,25 +1,25 @@
  [user]
      useConfigOnly = true
 -    name = Jack McKernan
 -    email = jmcker@outlook.com
+-    signingkey = FA8C01167D9A8CE6
 +    name = (none)
 +    email = (none)
-     signingkey = BA46B096BBBAAA5B
++    #signingkey = FA8C01167D9A8CE6
  [core]
      autocrlf = input
      editor = "vim"
@@ -21,9 +22,11 @@ index eb08d6e..9daf28e 100644
 -    helper = cache
 +    #helper = cache
  [commit]
-     #gpgsign = true
+-    gpgsign = true
++    #gpgsign = true
  [filter "lfs"]
-@@ -19,7 +19,7 @@
+     required = true
+     clean = git-lfs clean -- %f
      smudge = git-lfs smudge -- %f
      process = git-lfs filter-process
  [init]
