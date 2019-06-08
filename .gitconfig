@@ -2,7 +2,7 @@
     useConfigOnly = true
     name = Jack McKernan
     email = jmcker@outlook.com
-    signingkey = BA46B096BBBAAA5B
+    signingkey = FA8C01167D9A8CE6
 [core]
     autocrlf = input
     editor = "vim"
@@ -12,7 +12,7 @@
 [credential]
     helper = cache
 [commit]
-    #gpgsign = true
+    gpgsign = true
 [filter "lfs"]
     required = true
     clean = git-lfs clean -- %f
