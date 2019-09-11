@@ -39,7 +39,7 @@ alias extip="dig +short myip.opendns.com ANY @resolver1.opendns.com"
 alias json="python -m json.tool"
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
-alias newb="/mnt/c/Windows/System32/cmd.exe /c 'start bash'"
+alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 
 bashrc() {
@@ -56,11 +56,6 @@ win() {
 # Print the result of a simple equation
 calc() {
     echo "$1" | bc
-}
-
-# Compile with required flags for CS240
-gcccs() {
-    gcc -std=gnu99 -g -Wall -Werror -o "$1" "$2"
 }
 
 # Compile to assembly
@@ -95,7 +90,7 @@ start-ssh-agent() {
 start-gpg-agent() {
     export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent:0:1
     export GPG_TTY=$(tty)
-    gpg-connect-agent /bye || gpg-agent --daemon #&>/dev/null
+    gpg-connect-agent /bye &> /dev/null || gpg-agent --daemon &> /dev/null
 }
 
 # data git via ssh
@@ -117,11 +112,11 @@ phpserv() {
 }
 
 pyserv() {
-    python2 -m SimpleHTTPServer ${1:-8080}
+    python3 -m http.server ${1:-8080}
 }
 
-pyserv3() {
-    python3 -m http.server ${1:-8080}
+pyserv2() {
+    python2 -m SimpleHTTPServer ${1:-8080}
 }
 
 export PATH="$HOME/bin/:$PATH"
@@ -146,3 +141,4 @@ fi
 # Configure SSH and GPG agents
 start-ssh-agent
 start-gpg-agent
+
