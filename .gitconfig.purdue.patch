@@ -1,0 +1,15 @@
+diff --git a/.gitconfig b/.gitconfig
+index 05fb1b3..ad0adf8 100644
+--- a/.gitconfig
++++ b/.gitconfig
+@@ -2,8 +2,8 @@
+     useConfigOnly = true
+     name = Jack McKernan
+     email = jmcker@outlook.com
+-    signingkey = FA8C01167D9A8CE6
+-    #signingkey = B24D109150147544
++    #signingkey = FA8C01167D9A8CE6
++    signingkey = B24D109150147544
+ [core]
+     autocrlf = input
+     editor = "vim"

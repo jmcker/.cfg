@@ -1,8 +1,8 @@
 diff --git a/.gitconfig b/.gitconfig
-index 676ddef..a205a6a 100644
+index 05fb1b3..f7c2e5b 100644
 --- a/.gitconfig
 +++ b/.gitconfig
-@@ -1,25 +1,25 @@
+@@ -1,26 +1,26 @@
  [user]
      useConfigOnly = true
 -    name = Jack McKernan
@@ -11,6 +11,7 @@ index 676ddef..a205a6a 100644
 +    name = (none)
 +    email = (none)
 +    #signingkey = FA8C01167D9A8CE6
+     #signingkey = B24D109150147544
  [core]
      autocrlf = input
      editor = "vim"
@@ -23,7 +24,7 @@ index 676ddef..a205a6a 100644
 +    #helper = cache
  [commit]
 -    gpgsign = true
-+    #gpgsign = true
++    gpgsign = false
  [filter "lfs"]
      required = true
      clean = git-lfs clean -- %f
@@ -35,3 +36,45 @@ index 676ddef..a205a6a 100644
  
  [includeIf "gitdir:~/Documents/Aneesh/"]
      path = ~/Documents/Aneesh/.gitconfig
+diff --git a/.gitconfig.patch b/.gitconfig.patch
+index 3c2da9c..e69de29 100644
+--- a/.gitconfig.patch
++++ b/.gitconfig.patch
+@@ -1,37 +0,0 @@
+-diff --git a/.gitconfig b/.gitconfig
+-index 676ddef..a205a6a 100644
+---- a/.gitconfig
+-+++ b/.gitconfig
+-@@ -1,25 +1,25 @@
+- [user]
+-     useConfigOnly = true
+--    name = Jack McKernan
+--    email = jmcker@outlook.com
+--    signingkey = FA8C01167D9A8CE6
+-+    name = (none)
+-+    email = (none)
+-+    #signingkey = FA8C01167D9A8CE6
+- [core]
+-     autocrlf = input
+-     editor = "vim"
+-     excludesfile = ~/.gitignore_global
+--    #hooksPath = ~/.git-templates/hooks
+-+    hooksPath = ~/.git-templates/hooks
+-     ignorecase = false
+- [credential]
+--    helper = cache
+-+    #helper = cache
+- [commit]
+--    gpgsign = true
+-+    #gpgsign = true
+- [filter "lfs"]
+-     required = true
+-     clean = git-lfs clean -- %f
+-     smudge = git-lfs smudge -- %f
+-     process = git-lfs filter-process
+- [init]
+--    #templateDir = ~/.git-templates
+-+    templateDir = ~/.git-templates
+- 
+- [includeIf "gitdir:~/Documents/Aneesh/"]
+-     path = ~/Documents/Aneesh/.gitconfig
