@@ -3,6 +3,7 @@
     name = Jack McKernan
     email = jmcker@outlook.com
     signingkey = FA8C01167D9A8CE6
+    #signingkey = B24D109150147544
 [core]
     autocrlf = input
     editor = "vim"
