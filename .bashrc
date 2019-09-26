@@ -10,13 +10,11 @@ is-ssh-con() {
 }
 
 update-window-title() {
-    local window_host="bash"
-    [ ! -z "$(is-ssh-con)" ] && window_host="${USER}@${HOSTNAME}"
-
+    local window_host="bash" && [ ! -z "$(is-ssh-con)" ] && local window_host="${USER}@${HOSTNAME}"
     echo -ne "\033]0;${window_host}  |  $(dirs +0)\a"
 }
 
-PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con)\[\e[01;32m\]:\[\e[01;34m\]\w $ \[\e[0m\]'
+PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
 PROMPT_COMMAND="update-window-title;"
 export LS_COLORS='di=1;34:ow=1;34:'
 export VISUAL=vim
@@ -77,25 +75,6 @@ cdp() {
     cd ${HOME}/OneDrive\ -\ purdue.edu/Archive/CS\ 252/Lab\ "${1}"/lab"${1}"-src/
 }
 
-
-# Prep ssh-agent for WSL
-start-ssh-agent() {
-    if [ ! -z "$(ls ~/.ssh/*.key 2>/dev/null)" ]; then
-        if [ -z "$(pgrep ssh-agent -u ${USER})" ]; then
-
-            rm -rf /tmp/ssh-* 2>/dev/null
-            echo "Starting ssh-agent..."
-
-            eval $(ssh-agent)
-            ssh-add ~/.ssh/*.key
-
-        else
-            export SSH_AGENT_PID=$(pgrep ssh-agent -u ${USER})
-            export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user ${USER} -name "agent.*" 2>/dev/null)
-        fi
-    fi
-}
-
 start-gpg-agent() {
     export GPG_AGENT_INFO=${HOME}/.gnupg/S.gpg-agent:0:1
     export GPG_TTY=$(tty)
@@ -148,5 +127,5 @@ if [ -f ".workrc" ]; then
 fi
 
 # Configure SSH and GPG agents
-start-ssh-agent
+source ${HOME}/.ssh/.install-key.env && start-ssh-ring
 start-gpg-agent
