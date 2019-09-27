@@ -54,7 +54,7 @@ function add-key {
         echo -e "${BLUE}Adding key to instance of ssh-agent...${NC}"
         echo
 
-        ssh-add "${KEY_FILE}"
+        $(source ${HOME}/.ssh/.install-key.env; sshr switch ${IDENTITY:1}; ssh-add "${KEY_FILE}")
 
         if [ $? -ne 0 ]; then
             echo
@@ -64,7 +64,8 @@ function add-key {
             echo
         else
             echo
-            echo "Successfully added ${KEY_FILE} to ssh-agent with PID ${SSH_AGENT_PID}"
+            echo "Successfully added ${KEY_FILE} to ssh-agent for identity (${IDENTITY:1})."
+            echo "Try: sshr switch ${IDENTITY:1}; ssh ${NICKNAME:-TARGETNAME}"
         fi
 
         echo
@@ -110,6 +111,12 @@ echo -e '
 current-ssh-ring() {
     SSH_DISPLAY_IDENT=${SSH_AGENT_IDENT:1} && [ -z "${SSH_DISPLAY_IDENT}" ] && SSH_DISPLAY_IDENT="default"
     echo "${SSH_DISPLAY_IDENT}"
+}
+
+list-ssh-ring() {
+    for name in "$(ls ${HOME}/.ssh/.agent* 2>/dev/null)"; do
+        sed -r "s/.env//g; s/.*.agent.?//g" <<< ${name}
+    done
 }
 
 start-ssh-ring() {
@@ -159,9 +166,8 @@ export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 
         chmod 600 ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env
 
-        echo
-
         if [ ! -z "$(ls ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key 2>/dev/null)" ]; then
+            echo ${SSH_ASKPASS}
             ssh-add ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key
 
             echo
@@ -174,7 +180,7 @@ export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
     fi
 }
 
-ssh-ring() {
+switch-ssh-ring() {
     export SSH_AGENT_IDENT=${1} && [ ! -z "${SSH_AGENT_IDENT}" ] && export SSH_AGENT_IDENT=".${SSH_AGENT_IDENT}"
 
     echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > ${HOME}/.ssh/.ident.env
@@ -184,22 +190,40 @@ ssh-ring() {
 }
 
 clean-ssh-ring() {
-    killall ssh-agent
+    if [ ! -z "$(pgrep ssh-agent -u ${USER})" ]; then
+        killall -u ${USER} ssh-agent
+    fi
 
     rm -f ${HOME}/.ssh/.agent*
     rm -f ${HOME}/.ssh/.ident.env
     rm -f ${HOME}/.ssh/.socket ${HOME}/.ssh/.*.socket
 
-    source ${HOME}/.bashrc
+    SSH_AGENT_IDENT=". "
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
 }
 
-alias sshr="ssh-ring"
+ssh-ring() {
+    if [ "${1}" == "start" ]; then
+        start-ssh-ring
+    elif [ "${1}" == "add" ] || [ "${1}" == "switch" ] || [ "${1}" == "sw" ]; then
+        switch-ssh-ring ${2}
+    elif [ "${1}" == "clean" ]; then
+        clean-ssh-ring
+    elif [ "${1}" == "list" ]; then
+        list-ssh-ring
+    else
+        switch-ssh-ring ${1}
+    fi
+}
+
+alias sshr=ssh-ring
 
 ' > ${HOME}/.ssh/.install-key.env
 
-    grep -E 'start-ssh-ring' ${HOME}/.bashrc &>/dev/null
+    grep -E 'ssh-ring|sshr' ${HOME}/.bashrc &>/dev/null
     if [ ${?} -ne 0 ]; then
-        echo 'source ${HOME}/.ssh/.install-key.env && start-ssh-ring' >> ${HOME}/.bashrc
+        echo '\nsource ${HOME}/.ssh/.install-key.env; sshr start' >> ${HOME}/.bashrc
 
         echo "Appended auto-start script to ${HOME}/.bashrc"
     fi
@@ -351,7 +375,7 @@ if [ -z "${PORT}" ]; then
 fi
 
 if [ -z "${NICKNAME}" ]; then
-    echo "Enter a 'nickname' for the host"
+    echo "Enter a 'nickname' for the host:"
     echo "(i.e. data for data.cs.purdue.edu)"
     echo "Usage after nickname: ssh data"
     read NICKNAME
@@ -359,9 +383,9 @@ if [ -z "${NICKNAME}" ]; then
 fi
 
 if [ -z "${IDENTITY}" ]; then
-    echo "Enter a the identity that the key should belong to"
+    echo "Enter a the identity that the key should belong to:"
     echo "This allows grouping keys into separate agents and helps"
-    echo "avoid authentication failures when using a large number of keys"
+    echo "avoid authentication failures when using a large number of keys."
     read IDENTITY
     echo
 fi
@@ -377,7 +401,7 @@ key-gen
 echo -e "${YELLOW}------- Installing key on remote host -------${NC}"
 echo
 
-ssh-copy-id -i "${KEY_FILE}" ${USERNAME}@${TARGETNAME} -p ${PORT:-22}
+ssh-copy-id -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -i "${KEY_FILE}" ${USERNAME}@${TARGETNAME} -p ${PORT:-22}
 
 # Make sure copy succeeded
 if [ $? -ne 0 ]; then
@@ -392,7 +416,7 @@ CONFIG="
 
 Host ${NICKNAME:-TARGETNAME}
     Hostname ${TARGETNAME}
-    IdentityFile ${KEYFILE}
+    IdentityFile ${KEY_FILE}
     Port ${PORT:-22}
     User ${USERNAME}
 "

@@ -127,5 +127,6 @@ if [ -f ".workrc" ]; then
 fi
 
 # Configure SSH and GPG agents
-source ${HOME}/.ssh/.install-key.env && start-ssh-ring
 start-gpg-agent
+source ${HOME}/.ssh/.install-key.env
+sshr start
