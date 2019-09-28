@@ -136,8 +136,6 @@ start-ssh-ring() {
         source ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env
     fi
 
-    SSH_DISPLAY_IDENT=$(current-ssh-ring)
-
     # Make sure PID is ours and is valid
     pgrep ssh-agent -u ${USER} | grep -E "^${SSH_AGENT_PID}$" &>/dev/null
     local pid_invalid=${?}
@@ -148,7 +146,7 @@ start-ssh-ring() {
     # PID was invalid or the socket was dead
     if [ ${pid_invalid} -ne 0 ] || [ ${agent_dead} -ne 0 ]; then
 
-        echo "Starting ssh-agent for identity (${SSH_DISPLAY_IDENT})..."
+        echo "Starting ssh-agent for identity ($(current-ssh-ring))..."
 
         # PID is valid, but communication has been lost
         if [ ${pid_invalid} -eq 0 ]; then
@@ -175,7 +173,7 @@ export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
             local key_count=$(ssh-add -l 2>/dev/null | grep --invert-match "has no" | wc -l)
             echo "${key_count} key(s) loaded."
         else
-            echo "No keys found for (${SSH_DISPLAY_IDENT})."
+            echo "No keys found for ($(current-ssh-ring))."
         fi
     fi
 }
@@ -225,7 +223,12 @@ alias sshr=ssh-ring
 
     grep -E 'ssh-ring|sshr' ${HOME}/.bashrc &>/dev/null
     if [ ${?} -ne 0 ]; then
-        echo '\nsource ${HOME}/.ssh/.install-key.env; sshr start' >> ${HOME}/.bashrc
+        echo '
+if [ -f ${HOME}/.ssh/.install-key.env ]; then
+    source ${HOME}/.ssh/.install-key.env
+    ssh-ring start
+fi
+' >> ${HOME}/.bashrc
 
         echo "Appended auto-start script to ${HOME}/.bashrc"
     fi

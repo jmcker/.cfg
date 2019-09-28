@@ -135,5 +135,5 @@ fi
 start-gpg-agent
 if [ -f ${HOME}/.ssh/.install-key.env ]; then
     source ${HOME}/.ssh/.install-key.env
-    sshr start
+    ssh-ring start
 fi
