@@ -33,7 +33,7 @@ function key-gen {
         mkdir ${HOME}/.ssh
     fi
 
-    KEY_FILE="${HOME}/.ssh/${NICKNAME:-TARGETNAME}${IDENTITY}.key"
+    KEY_FILE="${HOME}/.ssh/${NICKNAME:-${TARGETNAME}}${IDENTITY}.key"
 
     echo -e "${YELLOW}-------- Generating ${KEYTYPE} key for ${USERNAME}@${TARGETNAME} --------${NC}"
     echo "It is highly recommended, albeit not required, that you use a password."
@@ -65,7 +65,7 @@ function add-key {
         else
             echo
             echo "Successfully added ${KEY_FILE} to ssh-agent for identity (${IDENTITY:1})."
-            echo "Try: sshr switch ${IDENTITY:1}; ssh ${NICKNAME:-TARGETNAME}"
+            echo "Try: sshr switch ${IDENTITY:1}; ssh ${NICKNAME:-${TARGETNAME}}"
         fi
 
         echo
@@ -220,6 +220,8 @@ ssh-ring() {
 alias sshr=ssh-ring
 
 ' > ${HOME}/.ssh/.install-key.env
+
+    chmod 600 ${HOME}/.ssh/.install-key.env
 
     grep -E 'ssh-ring|sshr' ${HOME}/.bashrc &>/dev/null
     if [ ${?} -ne 0 ]; then
@@ -414,7 +416,7 @@ echo
 
 CONFIG="
 
-Host ${NICKNAME:-TARGETNAME}
+Host ${NICKNAME:-${TARGETNAME}}
     Hostname ${TARGETNAME}
     IdentityFile ${KEY_FILE}
     Port ${PORT:-22}
@@ -426,14 +428,14 @@ echo -e "$CONFIG" >> ${HOME}/.ssh/config
 # ssh requires 600
 chmod 600 ${HOME}/.ssh/config
 
-echo "Appended ${NICKNAME:-TARGETNAME} to ${HOME}/.ssh/config"
+echo "Appended ${NICKNAME:-${TARGETNAME}} to ${HOME}/.ssh/config"
 echo "${CONFIG}"
 
 echo -e "${YELLOW}------- Installation complete -------${NC}"
 echo
 
 echo "Usage:"
-echo "    ssh ${NICKNAME:-TARGETNAME}"
+echo "    ssh ${NICKNAME:-${TARGETNAME}}"
 echo
 
 # Add key to running ssh-agent or prompt user to start a new shell

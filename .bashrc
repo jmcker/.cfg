@@ -14,6 +14,11 @@ update-window-title() {
     echo -ne "\033]0;${window_host}  |  $(dirs +0)\a"
 }
 
+# In case install-key script isn't defined
+current-ssh-ring() {
+    echo ""
+}
+
 PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
 PROMPT_COMMAND="update-window-title;"
 export LS_COLORS='di=1;34:ow=1;34:'
@@ -128,5 +133,7 @@ fi
 
 # Configure SSH and GPG agents
 start-gpg-agent
-source ${HOME}/.ssh/.install-key.env
-sshr start
+if [ -f ${HOME}/.ssh/.install-key.env ]; then
+    source ${HOME}/.ssh/.install-key.env
+    sshr start
+fi
