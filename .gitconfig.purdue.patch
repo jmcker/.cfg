@@ -1,5 +1,5 @@
 diff --git a/.gitconfig b/.gitconfig
-index 05fb1b3..ad0adf8 100644
+index 05fb1b3..ddadce7 100644
 --- a/.gitconfig
 +++ b/.gitconfig
 @@ -2,8 +2,8 @@
@@ -13,3 +13,12 @@ index 05fb1b3..ad0adf8 100644
  [core]
      autocrlf = input
      editor = "vim"
+@@ -11,7 +11,7 @@
+     #hooksPath = ~/.git-templates/hooks
+     ignorecase = false
+ [credential]
+-    helper = cache
++    #helper = cache
+ [commit]
+     gpgsign = true
+ [filter "lfs"]
