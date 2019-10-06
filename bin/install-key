@@ -114,7 +114,7 @@ current-ssh-ring() {
 }
 
 list-ssh-ring() {
-    for name in "$(ls ${HOME}/.ssh/.agent* 2>/dev/null)"; do
+    for name in ${HOME}/.ssh/.agent*; do
         sed -r "s/.env//g; s/.*.agent.?//g" <<< ${name}
     done
 }
@@ -151,9 +151,9 @@ start-ssh-ring() {
         # PID is valid, but communication has been lost
         if [ ${pid_invalid} -eq 0 ]; then
             kill ${SSH_AGENT_PID}
-            rm -f ${SSH_AUTH_SOCK}
         fi
 
+        rm -f ${SSH_AUTH_SOCK}
         eval $(ssh-agent -a ${HOME}/.ssh/${SSH_AGENT_IDENT}.socket)
 
         echo "
