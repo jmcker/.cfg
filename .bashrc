@@ -53,6 +53,7 @@ alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
+alias rdp="xfreerdp /v:localhost /w:1600 /h:900"
 
 bashrc() {
     vim ~/.bashrc
