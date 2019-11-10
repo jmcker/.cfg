@@ -10,17 +10,18 @@ USERNAME=""
 TARGETNAME=""
 PORT=""
 NICKNAME=""
-IDENTITY=""
+RING=""
 KEYTYPE="ecdsa"
 BITFLAG=" -b 521"
+SKIP_REMOTE_INSTALL="false"
 
 function help-text {
     echo "Usage:"
     echo "    install-key              Use the setup wizard"
     echo "    install-key -h           Display this message"
-    echo "    install-key -s           Install or update the startup script and exit"
+    echo "    install-key -s           Install or update the startup script and exit."
     echo "    install-key -g           GitHub mode - add a key manually or via the GitHub API"
-    echo "    install-key [-x hostname] [-u username] [-p port] [-n host nickname] [-P identity profile] [-t key type]"
+    echo "    install-key [-x hostname] [-u username] [-p port] [-n host nickname] [-l skip remote install] [-r identity ring] [-t key type]"
     echo
     echo "Valid key types are those supported by ssh-keygen: dsa | ecdsa | ed25519 | rsa | rsa1"
     echo "Key type defaults to ecdsa with 521 bits."
@@ -30,10 +31,10 @@ function help-text {
 function key-gen {
 
     if [ ! -d "${HOME}/.ssh" ]; then
-        mkdir ${HOME}/.ssh
+        mkdir "${HOME}/.ssh"
     fi
 
-    KEY_FILE="${HOME}/.ssh/${NICKNAME:-${TARGETNAME}}${IDENTITY}.key"
+    KEY_FILE="${HOME}/.ssh/${NICKNAME:-${TARGETNAME}}${RING}.key"
 
     echo -e "${YELLOW}-------- Generating ${KEYTYPE} key for ${USERNAME}@${TARGETNAME} --------${NC}"
     echo "It is highly recommended, albeit not required, that you use a password."
@@ -54,25 +55,32 @@ function add-key {
         echo -e "${BLUE}Adding key to instance of ssh-agent...${NC}"
         echo
 
-        $(source ${HOME}/.ssh/.install-key.env; sshr switch ${IDENTITY:1}; ssh-add "${KEY_FILE}")
+        $(source "${HOME}/.ssh/.install-key.env"; ssh-ring switch ${RING:1}; ssh-add "${KEY_FILE}")
 
         if [ $? -ne 0 ]; then
             echo
             echo "There was an issue adding ${KEY_FILE} to running instance of ssh-agent."
             echo "You may have to add it manually."
-            echo "Try: ssh-add ${KEY_FILE}"
+            echo "    Try: ssh-ring switch ${RING:1}; ssh-add ${KEY_FILE}"
             echo
         else
             echo
-            echo "Successfully added ${KEY_FILE} to ssh-agent for identity (${IDENTITY:1})."
-            echo "Try: sshr switch ${IDENTITY:1}; ssh ${NICKNAME:-${TARGETNAME}}"
+            echo "Successfully added ${KEY_FILE} to ssh-agent for identity (${RING:1})."
         fi
 
         echo
     fi
 }
 
-function add-startup-script() {
+function dump-public-key {
+    echo
+    echo -e "${YELLOW}-------- Public Key --------${NC}"
+
+    # Dump the public key to stdout
+    cat "${KEY_FILE}.pub"
+}
+
+function add-startup-script {
 
     # Clean up the function from the old version
     grep -E 'start-ssh-agent\(\)' ${HOME}/.bashrc &>/dev/null
@@ -80,14 +88,14 @@ function add-startup-script() {
 
         echo "Removing old startup script..."
 
-        cp ${HOME}/.bashrc ${HOME}/.bashrc-install-key.bak
+        cp "${HOME}/.bashrc" "${HOME}/.bashrc-install-key.bak"
 
         # The junk at the beginning is to read the whole file into the buffer so we can match newlines
         # Regular expression matches anything that is not a } proceeded by a newline (the closing of the function)
-        sed -ri ':a;N;$!ba;s/start-ssh-agent\(\) \{([^}]|([^\n]}))*}//g' ${HOME}/.bashrc
+        sed -ri ':a;N;$!ba;s/start-ssh-agent\(\) \{([^}]|([^\n]}))*}//g' "${HOME}/.bashrc"
 
         if [ ${?} -ne 0 ]; then
-            mv ${HOME}/.bashrc-install-key.bak ${HOME}/.bashrc
+            mv "${HOME}/.bashrc-install-key.bak" "${HOME}/.bashrc"
             echo "Cleanup of ${HOME}/.bashrc failed."
             exit 1
         fi
@@ -96,7 +104,7 @@ function add-startup-script() {
         sed -i ':a;N;$!ba;s/[^\n]*start-ssh-agent[^\n]*\n//g' ${HOME}/.bashrc
 
         if [ ${?} -ne 0 ]; then
-            mv ${HOME}/.bashrc-install-key.bak ${HOME}/.bashrc
+            mv "${HOME}/.bashrc-install-key.bak" "${HOME}/.bashrc"
             echo "Cleanup of ${HOME}/.bashrc failed."
             exit 1
         fi
@@ -115,6 +123,8 @@ current-ssh-ring() {
 
 list-ssh-ring() {
     for name in ${HOME}/.ssh/.agent*; do
+        # Indent if needed
+        [ "${1}" == "true" ] && echo -n "  "
         sed -r "s/.env//g; s/.*.agent.?//g" <<< ${name}
     done
 }
@@ -124,7 +134,7 @@ start-ssh-ring() {
     unset SSH_AGENT_PID
     unset SSH_AUTH_SOCK
 
-    # Get the last used identity
+    # Get the last used ring
     if [ -f ${HOME}/.ssh/.ident.env ]; then
         source ${HOME}/.ssh/.ident.env
     else
@@ -146,7 +156,7 @@ start-ssh-ring() {
     # PID was invalid or the socket was dead
     if [ ${pid_invalid} -ne 0 ] || [ ${agent_dead} -ne 0 ]; then
 
-        echo "Starting ssh-agent for identity ($(current-ssh-ring))..."
+        echo "Starting ssh-agent for ring ($(current-ssh-ring))..."
 
         # PID is valid, but communication has been lost
         if [ ${pid_invalid} -eq 0 ]; then
@@ -203,38 +213,38 @@ clean-ssh-ring() {
 
 ssh-ring() {
     if [ "${1}" == "start" ]; then
-        start-ssh-ring
+        start-ssh-ring "${@:2}"
     elif [ "${1}" == "add" ] || [ "${1}" == "switch" ] || [ "${1}" == "sw" ]; then
-        switch-ssh-ring ${2}
+        switch-ssh-ring "${@:2}"
     elif [ "${1}" == "clean" ]; then
-        clean-ssh-ring
+        clean-ssh-ring "${@:2}"
     elif [ "${1}" == "list" ]; then
-        list-ssh-ring
+        list-ssh-ring "${@:2}"
     else
-        switch-ssh-ring ${1}
+        switch-ssh-ring "${@}"
     fi
 }
 
 alias sshr=ssh-ring
 
-' > ${HOME}/.ssh/.install-key.env
+' > "${HOME}/.ssh/.install-key.env"
 
-    chmod 600 ${HOME}/.ssh/.install-key.env
+    chmod 600 "${HOME}/.ssh/.install-key.env"
 
-    grep -E 'ssh-ring|sshr' ${HOME}/.bashrc &>/dev/null
+    grep -E 'ssh-ring|sshr' "${HOME}/.bashrc" &>/dev/null
     if [ ${?} -ne 0 ]; then
         echo '
 if [ -f ${HOME}/.ssh/.install-key.env ]; then
     source ${HOME}/.ssh/.install-key.env
     ssh-ring start
 fi
-' >> ${HOME}/.bashrc
+' >> "${HOME}/.bashrc"
 
         echo "Appended auto-start script to ${HOME}/.bashrc"
     fi
 }
 
-while getopts ":hsgx:u:p:n:P:t" opt; do
+while getopts ":hsglx:u:p:n:r:t" opt; do
     case ${opt} in
         h )
             help-text
@@ -260,8 +270,11 @@ while getopts ":hsgx:u:p:n:P:t" opt; do
         n )
             NICKNAME="${OPTARG}"
             ;;
-        P )
-            IDENTITY="${OPTARG}"
+        l)
+            SKIP_REMOTE_INSTALL="true"
+            ;;
+        r )
+            RING="${OPTARG}"
             ;;
         t )
             KEYTYPE="${OPTARG}"
@@ -280,6 +293,7 @@ echo -e "${YELLOW}-------- SSH-key generation, configuration, and installation -
 echo
 
 add-startup-script
+source "${HOME}/.ssh/.install-key.env"
 
 # GitHub keys do not need to be installed on a remote host
 # Install using the GitHub API or print to stdout so that the user can copy/paste
@@ -335,11 +349,7 @@ if [ "${GITHUB}" == "true" ]; then
 
     if [ -z "${GITHUB_PASSWORD}" ]; then
 
-        echo
-        echo -e "${YELLOW}-------- Public Key --------${NC}"
-
-        # Dump the public key to stdout
-        cat "${KEY_FILE}.pub"
+        dump-public-key
 
         echo
         echo -e "${BLUE}Paste the public key from above into the 'Key' section of:${NC}"
@@ -380,41 +390,64 @@ if [ -z "${PORT}" ]; then
 fi
 
 if [ -z "${NICKNAME}" ]; then
-    echo "Enter a 'nickname' for the host:"
-    echo "(i.e. data for data.cs.purdue.edu)"
-    echo "Usage after nickname: ssh data"
+    echo "Enter a 'nickname' for the host (i.e. data for data.cs.purdue.edu)."
+    echo "Usage after nickname will be: ssh data"
+    echo "Nickname (blank will default to the hostname):"
     read NICKNAME
     echo
 fi
 
-if [ -z "${IDENTITY}" ]; then
-    echo "Enter a the identity that the key should belong to:"
-    echo "This allows grouping keys into separate agents and helps"
-    echo "avoid authentication failures when using a large number of keys."
-    read IDENTITY
+if [ -z "${RING}" ]; then
+    echo "Enter an identity ring (think key ring) that the key should belong to."
+    echo "This allows grouping keys into separate SSH agents and helps to avoid"
+    echo "authentication failures when using a large number of keys."
+    echo
+    echo "Existing SSH rings are:"
+    ssh-ring list true
+    echo
+    echo "Ring (blank for default):"
+    read RING
     echo
 fi
 
 # Append the separating dot for non-default names
-if [ ! -z "${IDENTITY}" ]; then
-    IDENTITY=".${IDENTITY}"
+if [ ! -z "${RING}" ]; then
+    RING=".${RING}"
 fi
 
 # Generate the actual key
 key-gen
+dump-public-key
 
-echo -e "${YELLOW}------- Installing key on remote host -------${NC}"
-echo
+public_key_contents="$(cat ${KEY_FILE}.pub)"
 
-ssh-copy-id -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -i "${KEY_FILE}" ${USERNAME}@${TARGETNAME} -p ${PORT:-22}
-
-# Make sure copy succeeded
-if [ $? -ne 0 ]; then
+if [ "${SKIP_REMOTE_INSTALL}" == "true" ]; then
     echo
-    echo "There was an issue installing the key to the remote host."
-    echo "Do you have the correct username and port?"
-    exit 1
+    echo -e "${YELLOW}Your public key has been printed above.${NC}"
+    echo
+    echo "Copy it and add it to ~/.ssh/authorized_keys on the remote host."
+    echo "This can be done by running the following ON THE REMOTE HOST:"
+    echo
+    echo "    echo ${public_key_contents} >> ~/.ssh/authorized_keys"
+    echo
+else
+    echo -e "${YELLOW}------- Installing key on remote host -------${NC}"
+    echo
+
+    ssh-copy-id -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -i "${KEY_FILE}" ${USERNAME}@${TARGETNAME} -p ${PORT:-22}
+
+    # Make sure copy succeeded
+    if [ $? -ne 0 ]; then
+        echo
+        echo "There was an issue installing the key to the remote host."
+        echo "On the remote host, run the following command to add it manually:"
+        echo
+        echo "    echo ${public_key_contents} >> ~/.ssh/authorized_keys"
+        echo
+        SKIP_REMOTE_INSTALL=false
+    fi
 fi
+
 echo
 
 CONFIG="
@@ -429,17 +462,28 @@ echo -e "$CONFIG" >> ${HOME}/.ssh/config
 
 # If newly created, will have 666
 # ssh requires 600
-chmod 600 ${HOME}/.ssh/config
+chmod 600 "${HOME}/.ssh/config"
 
 echo "Appended ${NICKNAME:-${TARGETNAME}} to ${HOME}/.ssh/config"
-echo "${CONFIG}"
-
-echo -e "${YELLOW}------- Installation complete -------${NC}"
-echo
-
-echo "Usage:"
-echo "    ssh ${NICKNAME:-${TARGETNAME}}"
-echo
 
 # Add key to running ssh-agent or prompt user to start a new shell
 add-key
+
+echo "Usage:"
+
+if [ ! -z "${RING}" ]; then
+    echo "    ssh-ring switch ${RING:1}"
+fi
+
+echo "    ssh ${NICKNAME:-${TARGETNAME}}"
+echo
+
+if [ "${SKIP_REMOTE_INSTALL}" == "true" ]; then
+    echo -e "${YELLOW}------- Installation PARTIALLY complete -------${NC}"
+    echo
+    echo "You will not have SSH access until you manually add the public key to the remote host."
+    echo "    Try: ssh-copy-id -i ${KEY_FILE} ${USERNAME}@${TARGETNAME}"
+    echo "or see above for more detail."
+else
+    echo -e "${YELLOW}------- Installation complete -------${NC}"
+fi
