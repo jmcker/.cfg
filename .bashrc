@@ -24,7 +24,7 @@ PROMPT_COMMAND="update-window-title;"
 export LS_COLORS='di=1;34:ow=1;34:'
 export VISUAL=vim
 export EDITOR="${VISUAL}"
-export HISTSIZE=50
+export HISTSIZE=1000
 
 bind "TAB:menu-complete"
 bind '"\e[Z":menu-complete-backward'
