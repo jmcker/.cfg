@@ -10,7 +10,9 @@ is-ssh-con() {
 }
 
 update-window-title() {
-    local window_host="bash" && [ ! -z "$(is-ssh-con)" ] && local window_host="${USER}@${HOSTNAME}"
+    local window_host="bash"
+    [ ! -z "${WSL_DISTRO_NAME}" ] && local window_host="${WSL_DISTRO_NAME}"
+    [ ! -z "$(is-ssh-con)" ] && local window_host="${USER}@${HOSTNAME}"
     echo -ne "\033]0;${window_host}  |  $(dirs +0)\a"
 }
 
@@ -39,7 +41,7 @@ alias .vimrc="vim ~/.vim/vimrc"
 alias bc="bc -l"
 
 # Git controls for dotfile repo
-alias cfg='git --git-dir=$HOME/.cfg --work-tree=$HOME'
+alias cfg='git --git-dir=${HOME}/.cfg --work-tree=${HOME}'
 cfg config --local status.showUntrackedFiles no
 
 alias ls="ls --color=auto"
@@ -64,7 +66,16 @@ bashrc() {
 
 # Start a Windows program
 win() {
-    /mnt/c/Windows/System32/cmd.exe /c "start ${@}"
+    /mnt/c/Windows/System32/cmd.exe /c "${@}"
+}
+
+code() {
+    if [ ! -z "${WSL_DISTRO_NAME}" ] && [ "${PWD##/mnt}" != "${PWD}" ]; then
+        echo "Launching Windows VSCode..."
+        win "code ${@} && exit"
+    else
+        command code ${@}
+    fi
 }
 
 # Print the result of a simple equation
