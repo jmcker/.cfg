@@ -78,6 +78,11 @@ code() {
     fi
 }
 
+# Mount Windows flashdrive or disk
+winmnt() {
+    mount -t drvfs ${1}: /mnt/${1}
+}
+
 # Print the result of a simple equation
 calc() {
     echo "$1" | bc
