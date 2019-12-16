@@ -78,6 +78,16 @@ code() {
     fi
 }
 
+nmap() {
+    if [ ! -z "${WSL_DISTRO_NAME}" ]; then
+        echo "Using Windows nmap.exe..."
+        echo
+        win "nmap ${@}"
+    else
+        command nmap ${@}
+    fi
+}
+
 # Mount Windows flashdrive or disk
 winmnt() {
     mount -t drvfs ${1}: /mnt/${1}
