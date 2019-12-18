@@ -1,0 +1,74 @@
+{
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/env": true
+    },
+    "editor.emptySelectionClipboard": false,
+    "remote.SSH.showLoginTerminal": true,
+    "svn.enableProposedApi": "none",
+    "extensions.ignoreRecommendations": false,
+    "cSpell.enabledLanguageIds": [
+        "asciidoc",
+        "c",
+        "cpp",
+        "csharp",
+        "css",
+        "git-commit",
+        "go",
+        "handlebars",
+        "html",
+        "jade",
+        "java",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "jsonc",
+        "latex",
+        "less",
+        "markdown",
+        "php",
+        "plaintext",
+        "powershell",
+        "pug",
+        "python",
+        "restructuredtext",
+        "rust",
+        "scala",
+        "scss",
+        "text",
+        "typescript",
+        "typescriptreact",
+        "yaml",
+        "yml"
+    ],
+    "cSpell.userWords": [
+        "expts",
+        "oceancomm",
+        "postgres",
+        "simo"
+    ],
+    "cSpell.languageSettings": [
+        {
+            "languageId": "python,powershell",
+            "includeRegExpList": [
+                "/#.*/",
+                "/\"\"\"(.*?\\n?)+?\"\"\"/g",
+                "/'''([^']*?[']{0,2}[^']*?)+?'''/g",
+                "string"
+            ]
+        },
+        {
+            "languageId": "cpp,c,javascript,typescript",
+            "allowCompoundWords": false,
+            "includeRegExpList": [
+                "CStyleComment",
+                "string"
+            ],
+            "ignoreRegExpList": [
+                "/#include.*/"
+            ]
+        }
+    ]
+}
