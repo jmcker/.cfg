@@ -1,0 +1,47 @@
+{
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\bash.exe",
+    "git.enabled": true,
+    "git.path": "C:\\Program Files\\Git\\bin",
+
+    "editor.wordWrap": "on",
+    "editor.wrappingIndent": "same",
+    "editor.emptySelectionClipboard": false,
+
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/env": true,
+        "**/node_modules": true
+    },
+
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+
+    "remote.SSH.showLoginTerminal": false,
+
+    "jenkins.pipeline.linter.connector.url": "https://jenkins.symboxtra.dynu.net/pipeline-model-converter/validate",
+    "jenkins.pipeline.linter.connector.user": "symboxtra",
+
+    "cmake.configureOnOpen": false,
+
+    "[typescript]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    },
+    "[javascript]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    },
+    "[html]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    },
+    "[json]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    },
+    "[jsonc]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    }
+}
