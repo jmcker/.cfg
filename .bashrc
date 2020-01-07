@@ -56,7 +56,7 @@ alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expa
 alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 alias rdp="xfreerdp /v:localhost /w:1920 /h:1000"
-alias bigbois="echo Loading... && du -sh --exclude . --exclude .. * .* | sort -rh | more -15"
+alias bigbois="echo Loading... && du -sh --exclude . --exclude .. * .* 2>/dev/null | sort -rh | more -15"
 
 bashrc() {
     vim ~/.bashrc
