@@ -51,6 +51,8 @@ alias grep="grep --color=auto"
 alias version="uname -a && lsb_release -a"
 alias extip="dig -4 +short myip.opendns.com A @resolver1.opendns.com && dig -6 +short myip.opendns.com AAAA @resolver1.opendns.com"
 alias json="python -m json.tool"
+alias sqlite="sqlite3"
+alias python="python3"
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
