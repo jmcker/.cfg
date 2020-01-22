@@ -1,0 +1,4 @@
+.mode column
+.header on
+.binary off
+.changes on
