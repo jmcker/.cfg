@@ -72,10 +72,13 @@ win() {
 }
 
 code() {
-    if [ ! -z "${WSL_DISTRO_NAME}" ] && [ "${PWD##/mnt}" != "${PWD}" ]; then
-        echo "Launching Windows VSCode..."
+    local expanded_path="$(realpath ${1})"
+
+    if [ ! -z "${WSL_DISTRO_NAME}" ] && [ "${expanded_path##/mnt}" != "${expanded_path}" ]; then
+        echo "Launching Windows VSCode for ${expanded_path}..."
         win "code ${@} && exit"
     else
+        echo "Launching VSCode for ${expanded_path}..."
         command code ${@}
     fi
 }
