@@ -84,6 +84,14 @@ code() {
     fi
 }
 
+docker() {
+    if [ "${1}" == "health" ]; then
+        docker inspect --format='{{json .State.Health}}' ${1} | python -m json.tool
+    else
+        command docker ${@}
+    fi
+}
+
 nmap() {
     if [ ! -z "${WSL_DISTRO_NAME}" ]; then
         echo "Using Windows nmap.exe..."
@@ -144,6 +152,35 @@ pyserv() {
 
 pyserv2() {
     python2 -m SimpleHTTPServer ${1:-8080}
+}
+
+ldap() {
+
+    # Only filter was provided
+    if [ "${#}" == "1" ]; then
+        local ldap_host="ipa.lan.symboxtra.com"
+        local base_dn="dc=lan,dc=symboxtra,dc=com"
+        local filter=${1}
+
+    # Host and filter (no base DN)
+    elif [ "${#}" == "2" ]; then
+        # Break the host at each . and strip the first entry
+        # server.sub.example.com -> dc=sub,dc=example,dc=com
+        # Default to cn=accounts
+        local base_dn=dc=${ldap_host//./,dc=}
+        local base_dn="cn=accounts,"${base_dn#*,}
+
+        local ldap_host=${1}
+        local filter=${2}
+
+    # Everything was provided
+    else
+        local ldap_host=${1}
+        local base_dn=${2}
+        local filter=${3}
+    fi
+
+    ldapsearch -x -h ${ldap_host} -b ${base_dn} ${filter}
 }
 
 export PATH="${HOME}/bin/:${PATH}"
