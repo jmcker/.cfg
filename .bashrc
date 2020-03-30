@@ -49,9 +49,10 @@ alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias fold="fold -s"
+alias cat="cat -v"
 alias version="uname -a && lsb_release -a"
 alias extip="dig -4 +short myip.opendns.com A @resolver1.opendns.com && dig -6 +short myip.opendns.com AAAA @resolver1.opendns.com"
-alias json="python -m json.tool"
+alias json="python3 -m json.tool"
 alias sqlite="sqlite3"
 alias python="python3"
 alias gitaddx="git update-index --chmod +x"
@@ -73,7 +74,9 @@ win() {
 }
 
 code() {
-    local expanded_path="$(realpath ${1})"
+
+    local path_arg="${1:-${PWD}}"
+    local expanded_path="$(realpath ${path_arg})"
 
     if [ ! -z "${WSL_DISTRO_NAME}" ] && [ "${expanded_path##/mnt}" != "${expanded_path}" ]; then
         echo "Launching Windows VSCode for ${expanded_path}..."
@@ -104,7 +107,7 @@ nmap() {
 
 # Mount Windows flashdrive or disk
 winmnt() {
-    mount -t drvfs ${1}: /mnt/${1}
+    sudo mount -t drvfs ${1}: /mnt/${1}
 }
 
 # Print the result of a simple equation
