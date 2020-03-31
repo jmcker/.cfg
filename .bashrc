@@ -73,6 +73,7 @@ win() {
     /mnt/c/Windows/System32/cmd.exe /c "${@}"
 }
 
+# Prefer native VSCode when launching from WSL
 code() {
 
     local path_arg="${1:-${PWD}}"
@@ -87,9 +88,10 @@ code() {
     fi
 }
 
+# Add custom commands to docker
 docker() {
     if [ "${1}" == "health" ]; then
-        docker inspect --format='{{json .State.Health}}' ${1} | python -m json.tool
+        docker inspect --format='{{json .State.Health}}' ${1} | json
     else
         command docker ${@}
     fi
@@ -120,20 +122,10 @@ asm() {
     gcc -std=gnu99 -S -o "${1}" "${2}"
 }
 
-# Move to CS251 Project directory
-cdp() {
-    cd ${HOME}/OneDrive\ -\ purdue.edu/Archive/CS\ 252/Lab\ "${1}"/lab"${1}"-src/
-}
-
 start-gpg-agent() {
     export GPG_AGENT_INFO=${HOME}/.gnupg/S.gpg-agent:0:1
     export GPG_TTY=$(tty)
     gpg-connect-agent /bye &> /dev/null || gpg-agent --daemon &> /dev/null
-}
-
-# data git via ssh
-gitp() {
-    git "${1}" ssh://jmckern@data.cs.purdue.edu:/homes/cs252/sourcecontrol/work/jmckern/"${2}"
 }
 
 # Start php in interactive mode if no arguments are passed
@@ -188,17 +180,18 @@ ldap() {
 
 export PATH="${HOME}/bin/:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
-export PATH="/home/${USER}/bin/:${PATH}"
-export PATH="/opt/qt/5.9.2/gcc_64/bin:${PATH}" # Qt on data.cs
-export PATH="${PATH}:/p/xinu/bin" # XINU on xinu.cs
-export JAVA8_HOME=/usr/lib/jvm/java-8-oracle/
 
 # Load  operating system specific files
 unamestr=`uname`
 if [ "${unamestr}" == 'Darwin' ]; then                  # OSX
-    [ -f "${HOME}/.osx_bashrc" ] && source ${HOME}/.osx_bashrc
+    [ -f "${HOME}/.osxrc" ] && source ${HOME}/.osxrc
 elif [ "${unamestr}" == 'Linux' ]; then                 # Linux
-    [ -f "${HOME}/.linux_bashrc"  ] && source ${HOME}/.linux_bashrc
+    [ -f "${HOME}/.linuxrc"  ] && source ${HOME}/.linuxrc
+fi
+
+hostname | grep "cs.purdue.edu" &> /dev/null
+if [ "${?}" == "0" ]; then
+    [ -f "${HOME}/.purduerc" ] && source ${HOME}/.purduerc
 fi
 
 if [ -f ".workrc" ]; then

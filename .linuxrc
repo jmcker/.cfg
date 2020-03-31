@@ -1,0 +1,3 @@
+# Linux specifc bash configuration
+
+export PATH="$HOME/qt/5.10.1/gcc_64/bin:${PATH}"
