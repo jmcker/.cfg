@@ -19,6 +19,11 @@
     "typescript.updateImportsOnFileMove.enabled": "always",
     "javascript.updateImportsOnFileMove.enabled": "always",
 
+    "python.sortImports.args": [
+        "-lai=1",   // Lines after import
+        "-m=3"      // Format for multi line output
+    ],
+
     "jenkins.pipeline.linter.connector.url": "https://jenkins.symboxtra.dynu.net/pipeline-model-converter/validate",
     "jenkins.pipeline.linter.connector.user": "symboxtra",
 
