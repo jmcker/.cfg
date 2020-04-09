@@ -61,6 +61,7 @@ alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf 
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 alias rdp="xfreerdp /v:localhost /w:1920 /h:1000"
 alias bigbois="echo Loading... && du -sh --exclude . --exclude .. * .* 2>/dev/null | sort -rh | more -15"
+alias mac-clean-zip="find . -name '.DS_Store' -exec rm -v {} \; && find . -name '__MACOSX' -prune -exec rm -rv {} \;"
 
 bashrc() {
     vim ~/.bashrc
