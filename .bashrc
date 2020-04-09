@@ -44,7 +44,7 @@ alias bc="bc -l"
 alias cfg='git --git-dir=${HOME}/.cfg --work-tree=${HOME}'
 cfg config --local status.showUntrackedFiles no
 
-alias ls="ls --color=auto"
+alias ls="ls --group-directories-first --color=auto"
 alias lsa="ls -A"
 alias dir="dir --color=auto"
 alias grep="grep --color=auto"
