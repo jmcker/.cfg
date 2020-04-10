@@ -238,6 +238,17 @@ clean-ssh-ring() {
     unset SSH_AUTH_SOCK
 }
 
+ssh-ring-usage() {
+    echo "Commands:"
+    echo "    ssh-ring"
+    echo "    ssh-ring start"
+    echo "    ssh-ring add|switch|sw [identity]"
+    echo "    ssh-ring list"
+    echo "    ssh-ring clean"
+    echo
+    echo "The ssh-ring command is also aliased to sshr."
+}
+
 ssh-ring() {
     if [ "${1}" == "start" ]; then
         start-ssh-ring "${@:2}"
@@ -247,6 +258,8 @@ ssh-ring() {
         clean-ssh-ring "${@:2}"
     elif [ "${1}" == "list" ]; then
         list-ssh-ring "${@:2}"
+    elif [ "${1}" == "help" ] || [ "${1}" == "-h" ] || [ "${1}" == "--help" ]; then
+        ssh-ring-usage
     else
         switch-ssh-ring "${@}"
     fi
