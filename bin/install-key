@@ -118,8 +118,8 @@ echo -e '
 
 function check-permissions {
 
-    local folder="$(realpath ${1})"
-    local perms="$(stat -c '%a' ${folder})"
+    local folder=$(realpath "${1}")
+    local perms=$(stat -c "%a" "${folder}")
     local expected="${2}"
 
     if [ "${perms}" != "${expected}" ]; then
@@ -138,7 +138,7 @@ current-ssh-ring() {
 }
 
 list-ssh-ring() {
-    for name in "${HOME}/.ssh"/.agent*; do
+    for name in "${HOME}"/.ssh/.agent*; do
         # Indent if needed
         [ "${1}" == "true" ] && echo -n "  "
         sed -r "s/.env//g; s/.*.agent.?//g" <<< "${name}"
@@ -156,7 +156,7 @@ start-ssh-ring() {
         check-permissions "${the_path}" 600
         source "${the_path}"
     else
-        echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > ${HOME}/.ssh/.ident.env
+        echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > "${HOME}/.ssh/.ident.env"
         chmod 600 "${the_path}"
     fi
 
@@ -167,7 +167,7 @@ start-ssh-ring() {
     fi
 
     # Make sure PID is ours and is valid
-    pgrep ssh-agent -u ${USER} | grep -E "^${SSH_AGENT_PID}$" &>/dev/null
+    pgrep ssh-agent -u "${USER}" | grep -E "^${SSH_AGENT_PID}$" &>/dev/null
     local pid_invalid=${?}
 
     ssh-add -l &> /dev/null
@@ -180,7 +180,7 @@ start-ssh-ring() {
 
         # PID is valid, but communication has been lost
         if [ ${pid_invalid} -eq 0 ]; then
-            kill ${SSH_AGENT_PID}
+            kill "${SSH_AGENT_PID}"
         fi
 
         rm -f "${SSH_AUTH_SOCK}"
@@ -193,9 +193,9 @@ start-ssh-ring() {
         eval $(ssh-agent -a "${the_path}")
 
         echo "
-export SSH_AGENT_IDENT="${SSH_AGENT_IDENT}"
-export SSH_AGENT_PID="${SSH_AGENT_PID}"
-export SSH_AUTH_SOCK="${SSH_AUTH_SOCK}"
+export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}
+export SSH_AGENT_PID=${SSH_AGENT_PID}
+export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
         " > "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
 
         chmod 600 "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
@@ -203,10 +203,10 @@ export SSH_AUTH_SOCK="${SSH_AUTH_SOCK}"
         # Load the keys for the selected identity
         if [ ! -z "$(ls ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key 2>/dev/null)" ]; then
             echo
-            ssh-add "${HOME}/.ssh/"*${SSH_AGENT_IDENT}.key
+            ssh-add "${HOME}"/.ssh/*"${SSH_AGENT_IDENT}".key
             echo
 
-            local key_count=$(ssh-add -l 2> /dev/null | grep --invert-match "has no" | wc -l)
+            local key_count=$(ssh-add -l 2> /dev/null | grep --invert-match --count "has no")
             echo "${key_count} key(s) loaded."
         else
             echo "No keys found for ($(current-ssh-ring))."
@@ -225,7 +225,7 @@ switch-ssh-ring() {
 
 clean-ssh-ring() {
     if [ ! -z "$(pgrep ssh-agent -u ${USER})" ]; then
-        killall -u ${USER} ssh-agent
+        killall -u "${USER}" ssh-agent
     fi
 
     rm -f "${HOME}"/.ssh/.agent*
@@ -350,11 +350,11 @@ if [ "${GITHUB}" == "true" ]; then
     if [ ! -z "${GITHUB_PASSWORD}" ]; then
 
         echo
-        echo -e "${BLUE}Adding SSH key to GitHub via GitHub API...${NC}"
+        echo -e "${YELLOW}-------- Adding SSH key to GitHub via GitHub API --------${NC}"
         echo
 
         curl --fail --request POST \
-        --data '{"title": "'"install-key-${HOSTNAME}"'", "key": "'"`cat ${KEY_FILE}.pub`"'"}' \
+        --data '{"title": "'"install-key-${HOSTNAME}"'", "key": "'"$(cat ${KEY_FILE}.pub)"'"}' \
         https://api.github.com/user/keys -K- <<< "-u ${USERNAME}:${GITHUB_PASSWORD}"
 
         if [ ${?} -ne 0 ]; then
@@ -446,7 +446,7 @@ fi
 key-gen
 dump-public-key
 
-public_key_contents="$(cat ${KEY_FILE}.pub)"
+public_key_contents=$(cat "${KEY_FILE}.pub")
 
 if [ "${SKIP_REMOTE_INSTALL}" == "true" ]; then
     echo
