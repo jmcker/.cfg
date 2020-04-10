@@ -202,7 +202,8 @@ fi
 
 # Configure SSH and GPG agents
 start-gpg-agent
-if [ -f ${HOME}/.ssh/.install-key.env ]; then
-    source ${HOME}/.ssh/.install-key.env
+if [ -f "${HOME}/.ssh/.install-key.env" ]; then
+    source "${HOME}/.ssh/.install-key.env"
     ssh-ring start
 fi
+

@@ -116,16 +116,32 @@ function add-startup-script {
 echo -e '
 ######## THIS FILE WILL BE OVERWRITTEN BY install-key ########
 
+function check-permissions {
+
+    local folder="$(realpath ${1})"
+    local perms="$(stat -c '%a' ${folder})"
+    local expected="${2}"
+
+    if [ "${perms}" != "${expected}" ]; then
+        echo
+        echo "Permissions ${perms} on ${1} (${folder}) are too open."
+        echo "Should be ${expected}. Refusing to continue."
+        echo
+
+        return 1
+    fi
+}
+
 current-ssh-ring() {
     SSH_DISPLAY_IDENT=${SSH_AGENT_IDENT:1} && [ -z "${SSH_DISPLAY_IDENT}" ] && SSH_DISPLAY_IDENT="default"
     echo "${SSH_DISPLAY_IDENT}"
 }
 
 list-ssh-ring() {
-    for name in ${HOME}/.ssh/.agent*; do
+    for name in "${HOME}/.ssh"/.agent*; do
         # Indent if needed
         [ "${1}" == "true" ] && echo -n "  "
-        sed -r "s/.env//g; s/.*.agent.?//g" <<< ${name}
+        sed -r "s/.env//g; s/.*.agent.?//g" <<< "${name}"
     done
 }
 
@@ -135,22 +151,26 @@ start-ssh-ring() {
     unset SSH_AUTH_SOCK
 
     # Get the last used ring
-    if [ -f ${HOME}/.ssh/.ident.env ]; then
-        source ${HOME}/.ssh/.ident.env
+    local the_path="${HOME}/.ssh/.ident.env"
+    if [ -f "${the_path}" ]; then
+        check-permissions "${the_path}" 600
+        source "${the_path}"
     else
         echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > ${HOME}/.ssh/.ident.env
-        chmod 600 ${HOME}/.ssh/.ident.env
+        chmod 600 "${the_path}"
     fi
 
-    if [ -f ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env ]; then
-        source ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env
+    local the_path="${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
+    if [ -f "${the_path}" ]; then
+        check-permissions "${the_path}" 600
+        source "${the_path}"
     fi
 
     # Make sure PID is ours and is valid
     pgrep ssh-agent -u ${USER} | grep -E "^${SSH_AGENT_PID}$" &>/dev/null
     local pid_invalid=${?}
 
-    ssh-add -l &>/dev/null
+    ssh-add -l &> /dev/null
     local agent_dead=${?}
 
     # PID was invalid or the socket was dead
@@ -163,24 +183,30 @@ start-ssh-ring() {
             kill ${SSH_AGENT_PID}
         fi
 
-        rm -f ${SSH_AUTH_SOCK}
-        eval $(ssh-agent -a ${HOME}/.ssh/${SSH_AGENT_IDENT}.socket)
+        rm -f "${SSH_AUTH_SOCK}"
+
+        local the_path="${HOME}/.ssh/${SSH_AGENT_IDENT}.socket"
+        if [ -f "${the_path}" ]; then
+            check-permissions "${the_path}" 600
+        fi
+
+        eval $(ssh-agent -a "${the_path}")
 
         echo "
-export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}
-export SSH_AGENT_PID=${SSH_AGENT_PID}
-export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
-        " > ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env
+export SSH_AGENT_IDENT="${SSH_AGENT_IDENT}"
+export SSH_AGENT_PID="${SSH_AGENT_PID}"
+export SSH_AUTH_SOCK="${SSH_AUTH_SOCK}"
+        " > "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
 
-        chmod 600 ${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env
+        chmod 600 "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
 
+        # Load the keys for the selected identity
         if [ ! -z "$(ls ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key 2>/dev/null)" ]; then
-            echo ${SSH_ASKPASS}
-            ssh-add ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key
-
+            echo
+            ssh-add "${HOME}/.ssh/"*${SSH_AGENT_IDENT}.key
             echo
 
-            local key_count=$(ssh-add -l 2>/dev/null | grep --invert-match "has no" | wc -l)
+            local key_count=$(ssh-add -l 2> /dev/null | grep --invert-match "has no" | wc -l)
             echo "${key_count} key(s) loaded."
         else
             echo "No keys found for ($(current-ssh-ring))."
@@ -191,8 +217,8 @@ export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 switch-ssh-ring() {
     export SSH_AGENT_IDENT=${1} && [ ! -z "${SSH_AGENT_IDENT}" ] && export SSH_AGENT_IDENT=".${SSH_AGENT_IDENT}"
 
-    echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > ${HOME}/.ssh/.ident.env
-    chmod 600 ${HOME}/.ssh/.ident.env
+    echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > "${HOME}/.ssh/.ident.env"
+    chmod 600 "${HOME}/.ssh/.ident.env"
 
     start-ssh-ring
 }
@@ -202,11 +228,12 @@ clean-ssh-ring() {
         killall -u ${USER} ssh-agent
     fi
 
-    rm -f ${HOME}/.ssh/.agent*
-    rm -f ${HOME}/.ssh/.ident.env
-    rm -f ${HOME}/.ssh/.socket ${HOME}/.ssh/.*.socket
+    rm -f "${HOME}"/.ssh/.agent*
+    rm -f "${HOME}/.ssh/.ident.env"
+    rm -f "${HOME}/.ssh/.socket"
+    rm -f "${HOME}"/.ssh/.*.socket
 
-    SSH_AGENT_IDENT=". "
+    SSH_AGENT_IDENT="."
     unset SSH_AGENT_PID
     unset SSH_AUTH_SOCK
 }
@@ -234,8 +261,8 @@ alias sshr=ssh-ring
     grep -E 'ssh-ring|sshr' "${HOME}/.bashrc" &>/dev/null
     if [ ${?} -ne 0 ]; then
         echo '
-if [ -f ${HOME}/.ssh/.install-key.env ]; then
-    source ${HOME}/.ssh/.install-key.env
+if [ -f "${HOME}/.ssh/.install-key.env" ]; then
+    source "${HOME}/.ssh/.install-key.env"
     ssh-ring start
 fi
 ' >> "${HOME}/.bashrc"
@@ -326,9 +353,9 @@ if [ "${GITHUB}" == "true" ]; then
         echo -e "${BLUE}Adding SSH key to GitHub via GitHub API...${NC}"
         echo
 
-        curl --fail -u "${USERNAME}:${GITHUB_PASSWORD}" --request POST \
+        curl --fail --request POST \
         --data '{"title": "'"install-key-${HOSTNAME}"'", "key": "'"`cat ${KEY_FILE}.pub`"'"}' \
-        https://api.github.com/user/keys
+        https://api.github.com/user/keys -K- <<< "-u ${USERNAME}:${GITHUB_PASSWORD}"
 
         if [ ${?} -ne 0 ]; then
             echo
