@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e
+
+OWNER="${1}"
+IMAGE="${2}"
+VERSION="${3}"
+REPO="${4}"
+
+usage() {
+    echo
+    echo "docker-release OWNER IMAGE VERSION [REPOSITORY]"
+}
+
+secret_folder="$(realpath ~/.secret)"
+perms="$(stat -c '%a' ${secret_folder})"
+if [ "${perms}" != "700" ]; then
+    echo "Permissions ${perms} on ~/.secret (${secret_folder}) are too open."
+    echo "Must be 700. Refusing to continue."
+
+    exit 1
+fi
+
+if [ -z "${OWNER}" ]; then
+    echo "Missing OWNER"
+    usage
+    exit 1
+fi
+
+if [ -z "${IMAGE}" ]; then
+    echo "Missing IMAGE"
+    usage
+    exit 1
+fi
+
+if [ -z "${VERSION}" ]; then
+    echo "Missing VERSION"
+    usage
+    exit 1
+fi
+
+docker tag ${OWNER}/${IMAGE} ${OWNER}/${IMAGE}:${VERSION}
+
+# DockerHub
+cat ~/.secret/DOCKER_HUB_TOKEN.secret | docker login docker.io -u jmcker --password-stdin
+
+docker push docker.io/${OWNER}/${IMAGE}:latest
+docker push docker.io/${OWNER}/${IMAGE}:${VERSION}
+
+docker logout docker.io
+
+# GitHub
+if [ ! -z "${REPO}" ]; then
+
+    cat ~/.secret/DOCKER_GH_TOKEN.secret | docker login docker.pkg.github.com -u jmcker --password-stdin
+
+    docker tag ${OWNER}/${IMAGE} docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:latest
+    docker tag ${OWNER}/${IMAGE} docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:${VERSION}
+
+    docker push docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:latest
+    docker push docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:${VERSION}
+
+    docker logout docker.pkg.github.com
+
+fi
