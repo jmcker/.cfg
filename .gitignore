@@ -2,6 +2,7 @@
 *.*.swp
 *.svn
 *.git
+*.secret
 
 *README.md
 sublime*
