@@ -23,7 +23,7 @@
     #templateDir = ~/.git-templates
 
 # Detect Purdue
-[includeIf "gitdif:/homes/"]
+[includeIf "gitdir:/homes/"]
     path = ~/.gitconfig.purdue
 
 [includeIf "gitdir:~/Documents/Aneesh/"]
@@ -42,6 +42,7 @@
 [alias]
     chmod = update-index --chmod
     addx = update-index --chmod +x
-    ls-ignored = git ls-files --others --i --exclude-standard
+    lsignore = ls-files --others --i --exclude-standard
     search = "!f() { git rev-list --all | xargs git grep \"${@}\"; }; f"
+    csearch = log --all --grep
     svnco = "!f() { svn init --prefix=svn --stdlayout --no-minimize-url --username=${2:-${USER}} ${@}; }; f"
