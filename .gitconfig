@@ -3,7 +3,6 @@
     name = Jack McKernan
     email = jmcker@outlook.com
     signingkey = FA8C01167D9A8CE6
-    #signingkey = B24D109150147544
 [core]
     autocrlf = input
     editor = "vim"
@@ -11,6 +10,7 @@
     #hooksPath = ~/.git-templates/hooks
     ignorecase = false
 [credential]
+    username = jmcker
     helper = cache
 [commit]
     gpgsign = true
@@ -21,6 +21,10 @@
     process = git-lfs filter-process
 [init]
     #templateDir = ~/.git-templates
+
+# Detect Purdue
+[includeIf "gitdif:/homes/"]
+    path = ~/.gitconfig.purdue
 
 [includeIf "gitdir:~/Documents/Aneesh/"]
     path = ~/Documents/Aneesh/.gitconfig
@@ -34,3 +38,10 @@
     path = ~/Documents/Jack/.gitconfig
 [includeIf "gitdir:~/Documents/Neel/"]
     path = ~/Documents/Neel/.gitconfig
+
+[alias]
+    chmod = update-index --chmod
+    addx = update-index --chmod +x
+    ls-ignored = git ls-files --others --i --exclude-standard
+    search = "!f() { git rev-list --all | xargs git grep \"${@}\"; }; f"
+    svnco = "!f() { svn init --prefix=svn --stdlayout --no-minimize-url --username=${2:-${USER}} ${@}; }; f"
