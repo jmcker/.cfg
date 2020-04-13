@@ -1,8 +1,8 @@
 diff --git a/.gitconfig b/.gitconfig
-index 05fb1b3..f7c2e5b 100644
+index 8318835..31f91db 100644
 --- a/.gitconfig
 +++ b/.gitconfig
-@@ -1,26 +1,26 @@
+@@ -1,26 +1,25 @@
  [user]
      useConfigOnly = true
 -    name = Jack McKernan
@@ -10,8 +10,6 @@ index 05fb1b3..f7c2e5b 100644
 -    signingkey = FA8C01167D9A8CE6
 +    name = (none)
 +    email = (none)
-+    #signingkey = FA8C01167D9A8CE6
-     #signingkey = B24D109150147544
  [core]
      autocrlf = input
      editor = "vim"
@@ -20,8 +18,8 @@ index 05fb1b3..f7c2e5b 100644
 +    hooksPath = ~/.git-templates/hooks
      ignorecase = false
  [credential]
--    helper = cache
-+    #helper = cache
+     username = jmcker
+     helper = cache
  [commit]
 -    gpgsign = true
 +    gpgsign = false
@@ -34,5 +32,5 @@ index 05fb1b3..f7c2e5b 100644
 -    #templateDir = ~/.git-templates
 +    templateDir = ~/.git-templates
  
- [includeIf "gitdir:~/Documents/Aneesh/"]
-     path = ~/Documents/Aneesh/.gitconfig
+ # Detect Purdue
+ [includeIf "gitdif:/homes/"]
