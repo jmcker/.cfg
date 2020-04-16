@@ -97,7 +97,7 @@ function add-startup-script {
         if [ ${?} -ne 0 ]; then
             mv "${HOME}/.bashrc-install-key.bak" "${HOME}/.bashrc"
             echo "Cleanup of ${HOME}/.bashrc failed."
-            exit 1
+            return 1 2> /dev/null || exit 1
         fi
 
         # Get rid of any line referencing the old command
@@ -106,7 +106,7 @@ function add-startup-script {
         if [ ${?} -ne 0 ]; then
             mv "${HOME}/.bashrc-install-key.bak" "${HOME}/.bashrc"
             echo "Cleanup of ${HOME}/.bashrc failed."
-            exit 1
+            return 1 2> /dev/null || exit 1
         fi
 
         echo "Removed. Backup of .bashrc is located at ${HOME}/.bashrc-install-key.bak"
@@ -126,6 +126,17 @@ function check-permissions {
         echo
         echo "Permissions ${perms} on ${1} (${folder}) are too open."
         echo "Should be ${expected}. Refusing to continue."
+        echo
+
+        return 1
+    fi
+
+    local owner=$(stat -c "%U" "${folder}")
+
+    if [ "${owner}" != "${USER}" ]; then
+        echo
+        echo "Owner on ${1} (${owner}) does not match user ${USER}."
+        echo "Refusing to continue."
         echo
 
         return 1
@@ -153,7 +164,7 @@ start-ssh-ring() {
     # Get the last used ring
     local the_path="${HOME}/.ssh/.ident.env"
     if [ -f "${the_path}" ]; then
-        check-permissions "${the_path}" 600
+        check-permissions "${the_path}" 600 || return 1 2> /dev/null || exit 1
         source "${the_path}"
     else
         echo "export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}" > "${HOME}/.ssh/.ident.env"
@@ -162,7 +173,7 @@ start-ssh-ring() {
 
     local the_path="${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
     if [ -f "${the_path}" ]; then
-        check-permissions "${the_path}" 600
+        check-permissions "${the_path}" 600 || return 1 2> /dev/null || exit 1
         source "${the_path}"
     fi
 
@@ -187,21 +198,23 @@ start-ssh-ring() {
 
         local the_path="${HOME}/.ssh/${SSH_AGENT_IDENT}.socket"
         if [ -f "${the_path}" ]; then
-            check-permissions "${the_path}" 600
+            check-permissions "${the_path}" 600 || return 1 2> /dev/null || exit 1
         fi
 
-        eval $(ssh-agent -a "${the_path}")
+        # Load the keys for the selected identity
+        if [ ! -z "$(ls ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key 2>/dev/null)" ]; then
 
-        echo "
+            # Start the agent and source its output
+            eval $(ssh-agent -a "${the_path}")
+
+            echo "
 export SSH_AGENT_IDENT=${SSH_AGENT_IDENT}
 export SSH_AGENT_PID=${SSH_AGENT_PID}
 export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
         " > "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
 
-        chmod 600 "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
+            chmod 600 "${HOME}/.ssh/.agent${SSH_AGENT_IDENT}.env"
 
-        # Load the keys for the selected identity
-        if [ ! -z "$(ls ${HOME}/.ssh/*${SSH_AGENT_IDENT}.key 2>/dev/null)" ]; then
             echo
             ssh-add "${HOME}"/.ssh/*"${SSH_AGENT_IDENT}".key
             echo
@@ -288,12 +301,12 @@ while getopts ":hsglx:u:p:n:r:t" opt; do
     case ${opt} in
         h )
             help-text
-            exit 0
+            return 0 2> /dev/null || exit 0
             ;;
         s )
             add-startup-script
             echo "Setup script installed."
-            exit 0
+            return 0 2> /dev/null || exit 0
             ;;
         g )
             GITHUB="true"
@@ -323,7 +336,7 @@ while getopts ":hsglx:u:p:n:r:t" opt; do
         \? )
             echo "Unknown option: -${OPTARG}" 1>&2
             help-text
-            exit 1
+            return 1 2> /dev/null || exit 1
             ;;
     esac
 done
@@ -408,7 +421,7 @@ if [ "${GITHUB}" == "true" ]; then
     # Add key to running ssh-agent or prompt user to start a new shell
     add-key
 
-    exit 0
+    return 0 2> /dev/null || exit 0
 fi
 
 if [ -z "${USERNAME}" ]; then
