@@ -1,0 +1,78 @@
+#!/bin/bash
+
+export BORG_REPO=ssh://${USER}@nas.lan.symboxtra.com/mnt/pool/${USER}/borg
+
+# Bail if borg is already running, maybe previous run didn't finish
+if pidof -x borg >/dev/null; then
+    echo "Backup already running"
+    exit 1
+fi
+
+# some helpers and error handling:
+info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
+trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
+
+info "Starting backup"
+
+# Backup the most important directories into an archive named after
+# the machine this script is currently running on:
+
+borg create                         \
+    --verbose                       \
+    --filter AME                    \
+    --progress                      \
+    --stats                         \
+    --show-rc                       \
+    --compression lz4               \
+    --exclude-caches                \
+    --exclude-from ~/.borg-ignore   \
+                                    \
+    ${BORG_REPO}::'{hostname}-{now}'\
+    /home/${USER}                   \
+    '/mnt/c/Program Files/path-overrides' \
+    '/mnt/c/ProgramData/Microsoft/Windows/Start Menu/Programs/Personal' \
+    /mnt/c/Users/jmcke/Contacts     \
+    /mnt/c/Users/jmcke/OpenVPN      \
+    /mnt/d/dev                      \
+    /mnt/d/jmcker/Backup            \
+    /mnt/d/jmcker/Desktop           \
+    /mnt/d/jmcker/Documents         \
+    /mnt/d/jmcker/FX                \
+    '/mnt/d/jmcker/Google Drive'    \
+    /mnt/d/jmcker/Music             \
+    '/mnt/d/jmcker/OneDrive - purdue.edu' \
+    /mnt/d/jmcker/Pictures          \
+    '/mnt/d/jmcker/Stock Media'     \
+    /mnt/d/jmcker/Videos
+
+backup_exit=${?}
+
+info "Pruning repository"
+
+# Use the `prune` subcommand to maintain 7 daily, 4 weekly and 6 monthly
+# archives of THIS machine. The '{hostname}-' prefix is very important to
+# limit prune's operation to this machine's archives and not apply to
+# other machines' archives also:
+
+borg prune                          \
+    --list                          \
+    --prefix '{hostname}-'          \
+    --show-rc                       \
+    --keep-daily    7               \
+    --keep-weekly   4               \
+    --keep-monthly  6               \
+
+prune_exit=$?
+
+# use highest exit code as global exit code
+global_exit=$(( backup_exit > prune_exit ? backup_exit : prune_exit ))
+
+if [ ${global_exit} -eq 0 ]; then
+    info "Backup and Prune finished successfully"
+elif [ ${global_exit} -eq 1 ]; then
+    info "Backup and/or Prune finished with warnings"
+else
+    info "Backup and/or Prune finished with errors"
+fi
+
+exit ${global_exit}

@@ -1,0 +1,53 @@
+*.tmp
+
+/home/*/.cache/*
+/var/cache/*
+/var/tmp/*
+
+/home/*/Downloads
+
+*/__pycache__
+*/site-packages
+*/node_modules
+*/.gradle
+*/.dart_tool
+
+# Visual Studio builds
+*/x86/Debug
+*/x86/Release
+*/x64/Debug
+*/x64/Release
+
+# Specific to my WSL
+# CMake builds, virtualenvs
+/mnt/d/dev/*/*/build-*
+/mnt/d/dev/*/*/env
+
+
+
+# Enable at your own risk
+# May be too aggressive
+#*.o
+#*.a
+#*.so
+#*.dylib
+#*.lib
+#*.dll
+#*.exe
+#*.exe~
+#*.out
+#*.class
+#*.jar
+#*.war
+#*.gem
+#*.rbc
+#*/build
+#*/build-*
+#*/.env
+#*/.venv
+#*/env/
+#*/venv/
+#*/ENV/
+#*/env.bak/
+#*/venv.bak/
+#*/.vs/
