@@ -111,6 +111,7 @@ nmap() {
 
 # Mount Windows flashdrive or disk
 winmnt() {
+    sudo mkdir -p /mnt/${1}
     sudo mount -t drvfs ${1}: /mnt/${1}
 }
 
