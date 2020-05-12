@@ -21,6 +21,8 @@
     process = git-lfs filter-process
 [init]
     #templateDir = ~/.git-templates
+[svn]
+    rmdir = true
 
 # Detect Purdue
 [includeIf "gitdir:/homes/"]
@@ -45,4 +47,5 @@
     lsignore = ls-files --others --i --exclude-standard
     search = "!f() { git rev-list --all | xargs git grep \"${@}\"; }; f"
     csearch = log --all --grep
-    svnco = "!f() { svn init --prefix=svn --stdlayout --no-minimize-url --username=${2:-${USER}} ${@}; }; f"
+    svnco = "!f() { svn init --prefix=svn/ --stdlayout --no-minimize-url --username=${2:-${USER}} ${@}; }; f"
+
