@@ -1,14 +1,25 @@
 {
-    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "editor.wordWrap": "on",
+    "editor.wrappingIndent": "same",
+    "editor.emptySelectionClipboard": false,
+
     "files.eol": "\n",
     "files.trimTrailingWhitespace": true,
     "files.exclude": {
-        "**/env": true
+        "**/env": true,
+        "**/node_modules": true
     },
-    "editor.emptySelectionClipboard": false,
+
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
     "remote.SSH.showLoginTerminal": true,
+
     "svn.enableProposedApi": "none",
-    "extensions.ignoreRecommendations": false,
+
+    "python.sortImports.args": [
+        "-lai=1",   // Lines after import
+        "-m=3"      // Format for multi line output
+    ],
+
     "cSpell.enabledLanguageIds": [
         "asciidoc",
         "c",

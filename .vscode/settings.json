@@ -28,4 +28,64 @@
     "jenkins.pipeline.linter.connector.user": "symboxtra",
 
     "cmake.configureOnOpen": false,
+
+    "cSpell.enabledLanguageIds": [
+        "asciidoc",
+        "c",
+        "cpp",
+        "csharp",
+        "css",
+        "git-commit",
+        "go",
+        "handlebars",
+        "html",
+        "jade",
+        "java",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "jsonc",
+        "latex",
+        "less",
+        "markdown",
+        "php",
+        "plaintext",
+        "powershell",
+        "pug",
+        "python",
+        "restructuredtext",
+        "rust",
+        "scala",
+        "scss",
+        "text",
+        "typescript",
+        "typescriptreact",
+        "yaml",
+        "yml"
+    ],
+    "cSpell.userWords": [
+        "postgres"
+    ],
+    "cSpell.languageSettings": [
+        {
+            "languageId": "python,powershell",
+            "includeRegExpList": [
+                "/#.*/",
+                "/\"\"\"(.*?\\n?)+?\"\"\"/g",
+                "/'''([^']*?[']{0,2}[^']*?)+?'''/g",
+                "string"
+            ]
+        },
+        {
+            "languageId": "cpp,c,javascript,typescript",
+            "allowCompoundWords": false,
+            "includeRegExpList": [
+                "CStyleComment",
+                "string"
+            ],
+            "ignoreRegExpList": [
+                "/#include.*/"
+            ]
+        }
+    ]
 }
