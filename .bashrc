@@ -56,6 +56,7 @@ alias extip="dig -4 +short myip.opendns.com A @resolver1.opendns.com && dig -6 +
 alias json="python3 -m json.tool"
 alias sqlite="sqlite3"
 alias python="python3"
+alias cloc='cloc --fullpath --not-match-d="$(tr "\n" "|" < ${HOME}/.clocignore)"'
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
