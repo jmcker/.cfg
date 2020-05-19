@@ -21,7 +21,8 @@
 
     "python.sortImports.args": [
         "-lai=1",   // Lines after import
-        "-m=3"      // Format for multi line output
+        "-m=3",     // Format for multi line output
+        "-w=115"
     ],
 
     "jenkins.pipeline.linter.connector.url": "https://jenkins.symboxtra.dynu.net/pipeline-model-converter/validate",
