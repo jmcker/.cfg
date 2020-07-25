@@ -36,21 +36,24 @@ current-ssh-ring() {
     echo ""
 }
 
-PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con loud)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
-PROMPT_COMMAND="update-window-title;"
+export PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con loud)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
+export PROMPT_COMMAND="update-window-title;"
 export LS_COLORS='di=1;34:ow=1;34:'
 export VISUAL=vim
 export EDITOR="${VISUAL}"
 export HISTSIZE=1000
 export HISTCONTROL=ignorespace
 
+export PATH="${HOME}/bin/:${PATH}"
+export PATH="${HOME}/.local/bin:${PATH}"
+
+# Cycle through completion options
 bind "TAB:menu-complete"
 bind '"\e[Z":menu-complete-backward'
 #bind "set show-all-if-ambiguous on"
 #bind "set menu-complete-display-prefix on"
 
 alias mail=mailx
-alias i=dirinfo
 
 alias .bashrc="vim ~/.bashrc"
 alias .vimrc="vim ~/.vim/vimrc"
@@ -123,6 +126,7 @@ docker() {
     fi
 }
 
+# Use Windows nmap
 nmap() {
     if [ ! -z "${WSL_DISTRO_NAME}" ]; then
         echo "Using Windows nmap.exe..."
@@ -169,46 +173,14 @@ phpserv() {
 }
 
 pyserv() {
-    python3 -m http.server ${1:-8080}
+    python -m http.server ${1:-8080}
 }
 
 pyserv2() {
-    python2 -m SimpleHTTPServer ${1:-8080}
+    python -m SimpleHTTPServer ${1:-8080}
 }
 
-ldap() {
-
-    # Only filter was provided
-    if [ "${#}" == "1" ]; then
-        local ldap_host="ipa.lan.symboxtra.com"
-        local base_dn="dc=lan,dc=symboxtra,dc=com"
-        local filter=${1}
-
-    # Host and filter (no base DN)
-    elif [ "${#}" == "2" ]; then
-        # Break the host at each . and strip the first entry
-        # server.sub.example.com -> dc=sub,dc=example,dc=com
-        # Default to cn=accounts
-        local base_dn=dc=${ldap_host//./,dc=}
-        local base_dn="cn=accounts,"${base_dn#*,}
-
-        local ldap_host=${1}
-        local filter=${2}
-
-    # Everything was provided
-    else
-        local ldap_host=${1}
-        local base_dn=${2}
-        local filter=${3}
-    fi
-
-    ldapsearch -x -h ${ldap_host} -b ${base_dn} ${filter}
-}
-
-export PATH="${HOME}/bin/:${PATH}"
-export PATH="${HOME}/.local/bin:${PATH}"
-
-# Load  operating system specific files
+# Load operating system specific files
 unamestr=`uname`
 if [ "${unamestr}" == 'Darwin' ]; then                  # OSX
     [ -f "${HOME}/.osxrc" ] && source ${HOME}/.osxrc
@@ -216,13 +188,29 @@ elif [ "${unamestr}" == 'Linux' ]; then                 # Linux
     [ -f "${HOME}/.linuxrc"  ] && source ${HOME}/.linuxrc
 fi
 
-hostname | grep "cs.purdue.edu" &> /dev/null
-if [ "${?}" == "0" ]; then
+# Load Purdue specific files
+if hostname | grep "cs.purdue.edu" &> /dev/null; then
     [ -f "${HOME}/.purduerc" ] && source ${HOME}/.purduerc
 fi
 
+# Load work specific files
 if [ -f ".workrc" ]; then
     source ${HOME}/.workrc
+fi
+
+# Delay loading NVM until it's needed
+if [ -f "${HOME}/.nvm/nvm.sh" ]; then
+    export NVM_DIR="${HOME}/.nvm"
+    [ -s "${NVM_DIR}/bash_completion" ] && source "${NVM_DIR}/bash_completion"
+
+    alias load-nvm='unalias nvm node npm yarn gulp grunt webpack && source ${NVM_DIR}/nvm.sh'
+    alias nvm='load-nvm && nvm'
+    alias node='load-nvm && node'
+    alias npm='load-nvm && npm'
+    alias yarn='load-nvm && yarn'
+    alias gulp='load-nvm && gulp'
+    alias grunt='load-nvm && grunt'
+    alias webpack='load-nvm && webpack'
 fi
 
 # Configure SSH and GPG agents
