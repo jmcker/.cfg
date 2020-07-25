@@ -98,7 +98,7 @@ code() {
     local path_arg="${1:-${PWD}}"
     local expanded_path="$(realpath ${path_arg})"
 
-    if [ ! -z "${WSL_DISTRO_NAME}" ] && [ "${expanded_path##/mnt}" != "${expanded_path}" ]; then
+    if is-wsl && [ "${expanded_path##/mnt}" != "${expanded_path}" ]; then
         echo "Launching Windows VSCode for ${expanded_path}..."
         win "code ${@} && exit"
     else
@@ -111,7 +111,7 @@ code() {
 docker() {
     local docker_command="command docker"
 
-    if [ ! -z "${WSL_DISTRO_NAME}" ]; then
+    if is-wsl; then
         echo "Using Windows docker.exe..."
         echo
         docker_command="win docker.exe"
@@ -126,7 +126,7 @@ docker() {
 
 # Use Windows nmap
 nmap() {
-    if [ ! -z "${WSL_DISTRO_NAME}" ]; then
+    if is-wsl; then
         echo "Using Windows nmap.exe..."
         echo
         win "nmap.exe ${@}"
@@ -136,6 +136,7 @@ nmap() {
 }
 
 # Mount Windows flashdrive or disk
+# Param is the drive letter (lowercase?)
 winmnt() {
     sudo mkdir -p /mnt/${1}
     sudo mount -t drvfs ${1}: /mnt/${1}
