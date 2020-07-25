@@ -21,12 +21,8 @@ is-wsl() {
     fi
 }
 
-distro-name() {
-    echo $(source /etc/os-release; echo -n "${PRETTY_NAME:-${NAME} ${VERSION_ID}}")
-}
-
 update-window-title() {
-    local window_host="$(distro-name)$(is-wsl yes)"
+    local window_host="${DISTRO_NAME}$(is-wsl yes)"
     is-ssh-con && local window_host="${USER}@${HOSTNAME} [${window_host}]"
     echo -ne "\033]0;${window_host}  |  $(dirs +0)\a"
 }
@@ -46,6 +42,8 @@ export HISTCONTROL=ignorespace
 
 export PATH="${HOME}/bin/:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
+
+export DISTRO_NAME=$(source /etc/os-release; echo -n "${PRETTY_NAME:-${NAME} ${VERSION_ID}}")
 
 # Cycle through completion options
 bind "TAB:menu-complete"
