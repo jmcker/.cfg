@@ -44,8 +44,10 @@
 [alias]
     chmod = update-index --chmod
     addx = update-index --chmod +x
-    lsignore = ls-files --others --i --exclude-standard
+    lsi = ls-files --others --i --exclude-standard
+    lsignore = !git lsi
+    log-short = log --pretty=format:'%C(yellow)%h%Creset - %Cgreen(%cr) %C(bold blue)<%an>%Creset %s %C(yellow)%d%Creset' --abbrev-commit
+    csearch = !git log-short --all --grep
     search = "!f() { git rev-list --all | xargs git grep \"${@}\"; }; f"
-    csearch = log --all --grep
     svnco = "!f() { svn init --prefix=svn/ --stdlayout --no-minimize-url --username=${2:-${USER}} ${@}; }; f"
 

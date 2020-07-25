@@ -5,14 +5,29 @@
 
 is-ssh-con() {
     if [ -n "${SSH_CLIENT}" ] || [ -n "${SSH_TTY}" ]; then
-        echo -ne '<ssh>'
+        [ -n "${1}" ] && echo '<ssh>' # Be loud
+        return 0
+    else
+        return 1
     fi
 }
 
+is-wsl() {
+    if uname -r 2>&1 | grep "Microsoft" &> /dev/null; then
+        [ -n "${1}" ] && echo " WSL" # Be loud
+        return 0
+    else
+        return 1
+    fi
+}
+
+distro-name() {
+    echo $(source /etc/os-release; echo -n "${PRETTY_NAME:-${NAME} ${VERSION_ID}}")
+}
+
 update-window-title() {
-    local window_host="bash"
-    [ ! -z "${WSL_DISTRO_NAME}" ] && local window_host="${WSL_DISTRO_NAME}"
-    [ ! -z "$(is-ssh-con)" ] && local window_host="${USER}@${HOSTNAME}"
+    local window_host="$(distro-name)$(is-wsl yes)"
+    is-ssh-con && local window_host="${USER}@${HOSTNAME} [${window_host}]"
     echo -ne "\033]0;${window_host}  |  $(dirs +0)\a"
 }
 
@@ -21,7 +36,7 @@ current-ssh-ring() {
     echo ""
 }
 
-PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
+PS1='\[\e[01;32m\]\u@\h\[\e[01;30m\]$(is-ssh-con loud)\[\e[01;32m\]:\[\e[01;34m\]\w ($(current-ssh-ring)) $ \[\e[0m\]'
 PROMPT_COMMAND="update-window-title;"
 export LS_COLORS='di=1;34:ow=1;34:'
 export VISUAL=vim
@@ -93,10 +108,18 @@ code() {
 
 # Add custom commands to docker
 docker() {
+    local docker_command="command docker"
+
+    if [ ! -z "${WSL_DISTRO_NAME}" ]; then
+        echo "Using Windows docker.exe..."
+        echo
+        docker_command="win docker.exe"
+    fi
+
     if [ "${1}" == "health" ]; then
-        docker inspect --format='{{json .State.Health}}' ${1} | json
+        ${docker_command} inspect --format='{{json .State.Health}}' ${2} | json
     else
-        command docker ${@}
+        ${docker_command} ${@}
     fi
 }
 
@@ -104,7 +127,7 @@ nmap() {
     if [ ! -z "${WSL_DISTRO_NAME}" ]; then
         echo "Using Windows nmap.exe..."
         echo
-        win "nmap ${@}"
+        win "nmap.exe ${@}"
     else
         command nmap ${@}
     fi
