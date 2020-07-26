@@ -30,7 +30,8 @@ borg create                         \
     ${BORG_REPO}::'{hostname}-{now}'\
     /home/${USER}                   \
     '/mnt/c/Program Files/path-overrides' \
-    '/mnt/c/ProgramData/Microsoft/Windows/Start Menu/Programs/Personal' \
+    '/mnt/c/ProgramData/Microsoft/Windows/Start Menu/Programs' \
+    '/mnt/c/Users/jmcke/AppData/Roaming/Microsoft/Windows/Start Menu/Programs' \
     /mnt/c/Users/jmcke/Contacts     \
     /mnt/c/Users/jmcke/OpenVPN      \
     /mnt/d/dev                      \
