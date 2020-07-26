@@ -92,6 +92,13 @@ win() {
     /mnt/c/Windows/System32/cmd.exe /c "${@}"
 }
 
+# Mount Windows flashdrive or disk
+# Param is the drive letter (lowercase?)
+winmnt() {
+    sudo mkdir -p /mnt/${1}
+    sudo mount -t drvfs ${1}: /mnt/${1}
+}
+
 # Prefer native VSCode when launching from WSL
 code() {
 
@@ -135,11 +142,17 @@ nmap() {
     fi
 }
 
-# Mount Windows flashdrive or disk
-# Param is the drive letter (lowercase?)
-winmnt() {
-    sudo mkdir -p /mnt/${1}
-    sudo mount -t drvfs ${1}: /mnt/${1}
+# Test for DNNSEC validation
+# Can provide @X.X.X.X as an arg to test non-default DNS server
+test-dnssec() {
+    local output=$(dig +dnssec dnssec-failed.org A ${@})
+    if echo "${output}" | grep -E 'status: SERVFAIL' &> /dev/null; then
+        echo "DNNSEC validation is OK"
+        return 0
+    else
+        echo "No DNNSEC validation"
+        return 1
+    fi
 }
 
 # Print the result of a simple equation
