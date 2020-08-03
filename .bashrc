@@ -67,11 +67,13 @@ alias dir="dir --color=auto"
 alias grep="grep --color=auto"
 alias fold="fold -s"
 alias cat="cat -v"
+alias sudo="sudo --preserve-env=HTTP_PROXY,HTTPS_PROXY,NO_PROXY,http_proxy,https_proxy,no_proxy"
 alias version="uname -a && lsb_release -a"
 alias extip="dig -4 +short myip.opendns.com A @resolver1.opendns.com && dig -6 +short myip.opendns.com AAAA @resolver1.opendns.com"
 alias json="python3 -m json.tool"
 alias sqlite="sqlite3"
 alias python="python3"
+alias pip="pip3"
 alias cloc='cloc --fullpath --not-match-d="$(tr "\n" "|" < ${HOME}/.clocignore)"'
 alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
@@ -153,6 +155,16 @@ test-dnssec() {
         echo "No DNNSEC validation"
         return 1
     fi
+}
+
+# Unset proxy-related environment variables
+unset-proxy() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    unset FTP_PROXY
+    unset http_proxy
+    unset https_proxy
+    unset ftp_proxy
 }
 
 # Print the result of a simple equation
