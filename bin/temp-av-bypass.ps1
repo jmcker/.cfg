@@ -30,7 +30,7 @@ if (${help}) {
 }
 
 # Grab the Python version from WSL
-$python_version = bash.exe -c "python3 --version | sed -n 's/Python //p'" | %{ New-Object System.Version ($_) }
+$python_version = bash.exe -i -c "python3 --version | sed -n 's/Python //p'" | %{ New-Object System.Version ($_) }
 $process_name = "python" + ${python_version}.major + "." + ${python_version}.minor
 
 echo "Adding exclusion for process ${process_name}"
@@ -39,7 +39,7 @@ echo "Starting '${command}'..."
 echo ""
 
 try {
-    bash.exe -c "${command}"
+    bash.exe -i -c "${command}"
 } catch [Exception] {
     echo "Error occurred:"
     echo "    $(${_}.Exception.GetType().FullName)"
