@@ -34,6 +34,7 @@ borg create                         \
     '/mnt/c/Users/jmcke/AppData/Roaming/Microsoft/Windows/Start Menu/Programs' \
     /mnt/c/Users/jmcke/Contacts     \
     /mnt/c/Users/jmcke/OpenVPN      \
+    /mnt/d/VM/iso                   \
     /mnt/d/dev                      \
     /mnt/d/jmcker/Backup            \
     /mnt/d/jmcker/Desktop           \
