@@ -19,6 +19,8 @@
     "alwaysShowTabs": false,
     "showTabsInTitlebar": true,
     "confirmCloseAllTabs": true,
+    "largePasteWarning": true,
+    "multiLinePasteWarning": false,
 
     "initialCols": 120,
     "initialRows": 30,
@@ -35,7 +37,7 @@
             "snapOnInput": true, // Jump to the bottom when typing
             "scrollbarState": "hidden",
             "historySize": 9001,
-            "closeOnExit": true,
+            "closeOnExit": "always",
             "colorScheme": "Campbell",
             "padding": "0, 0, 0, 0",
             "acrylicOpacity": 0.5,
@@ -97,6 +99,7 @@
         // - "splitMode": "duplicate" makes the new pane use the focused pane's profile.
         // To learn more about panes, visit https://aka.ms/terminal-panes
         { "command": { "action": "splitPane", "split": "auto", "splitMode": "duplicate" }, "keys": "alt+shift+d" },
+        { "command": { "action": "splitPane", "split": "auto", "splitMode": "duplicate" }, "keys": "ctrl+\\" },
 
         { "command": "openNewTabDropdown", "keys": "ctrl+shift+space" },
         { "command": "duplicateTab", "keys": "ctrl+b" },
