@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+find . -name '*.pdf' -print0 | while read -d $'\0' file
+do
+
+    file_name="${file%.*}"
+    file_size=$(stat -c%s "${file}")
+
+    if echo "${file}" | grep ".ocr." &> /dev/null; then
+        echo "Skipping ${file}"
+        continue
+    elif [ -f "${file_name}.ocr.pdf" ]; then
+        echo "Already processed ${file}"
+        continue
+    elif [ "${file_size}" -gt 50000000 ]; then # Larger than 50 MB
+        echo "File larger than 50MB. Skipping"
+        continue
+    else
+        echo "Processing ${file_name}.pdf..."
+        ocrmypdf --force -i "${file_name}.pdf" "${file_name}.ocr.pdf"
+    fi
+
+done
