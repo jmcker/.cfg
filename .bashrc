@@ -79,6 +79,7 @@ alias gitaddx="git update-index --chmod +x"
 alias cdg='cd "`git rev-parse --show-toplevel`"' # single quotes to prevent expansion
 alias newb='/mnt/c/Windows/System32/cmd.exe /c start ubuntu.exe -c "cd $(printf %q "${PWD}"); /bin/bash"'
 alias ssh-nk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
+alias sftp-nk="sftp -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no"
 alias rdp="xfreerdp /v:localhost /w:1920 /h:1000"
 alias bigbois="echo Loading... && du -sh --exclude . --exclude .. * .* 2>/dev/null | sort -rh | more -15"
 alias mac-clean-zip="find . -name '.DS_Store' -exec rm -v {} \; && find . -name '__MACOSX' -prune -exec rm -rv {} \;"
