@@ -19,7 +19,7 @@ do
         continue
     else
         echo "Processing ${file_name}.pdf..."
-        ocrmypdf --force -i "${file_name}.pdf" "${file_name}.ocr.pdf"
+        ocrmypdf --force --rotate-pages -i "${file_name}.pdf" "${file_name}.ocr.pdf"
     fi
 
 done
