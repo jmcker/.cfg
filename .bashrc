@@ -129,6 +129,13 @@ docker() {
 
     if [ "${1}" == "health" ]; then
         ${docker_command} inspect --format='{{json .State.Health}}' ${2} | json
+    elif [ "${1}" == "net-debug" ]; then
+        echo "Installing network debug tools in ${2}..."
+        ${docker_command} exec ${2} /bin/bash -c 'apt update && apt install net-tools iproute2 dnsutils curl'
+        echo
+        echo "Installed. Starting shell..."
+        echo
+        ${docker_command} exec -it ${2} /bin/bash
     else
         ${docker_command} ${@}
     fi
