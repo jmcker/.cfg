@@ -14,12 +14,12 @@ do
     elif [ -f "${file_name}.ocr.pdf" ]; then
         echo "Already processed ${file}"
         continue
-    elif [ "${file_size}" -gt 50000000 ]; then # Larger than 50 MB
-        echo "File larger than 50MB. Skipping"
+    elif [ "${file_size}" -gt 100000000 ]; then # Larger than 100 MB
+        echo "File larger than 100MB. Skipping"
         continue
     else
         echo "Processing ${file_name}.pdf..."
-        ocrmypdf --force --rotate-pages -i "${file_name}.pdf" "${file_name}.ocr.pdf"
+        ocrmypdf --force -i "${file_name}.pdf" "${file_name}.ocr.pdf"
     fi
 
 done
