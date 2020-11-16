@@ -212,6 +212,15 @@ pyserv2() {
     python -m SimpleHTTPServer ${1:-8080}
 }
 
+# https://github.com/jessfraz/dotfiles/blob/master/.bashrc
+# Add tab completion for SSH hostnames based on ~/.ssh/config
+# ignoring wildcards
+[ -f "${HOME}/.ssh/config" ] && complete -o "default" \
+	-o "nospace" \
+	-W "$(grep "^Host" ~/.ssh/config | \
+	grep -v "[?*]" | cut -d " " -f2 | \
+	tr ' ' '\n')" scp sftp ssh
+
 # Load operating system specific files
 unamestr=`uname`
 if [ "${unamestr}" == 'Darwin' ]; then                  # OSX
