@@ -41,7 +41,7 @@
             "colorScheme": "Campbell",
             "padding": "0, 0, 0, 0",
             "acrylicOpacity": 0.5,
-            "useAcrylic": true,
+            "useAcrylic": false,
             "fontFace": "Consolas",
             "fontSize": 11,
             "cursorShape": "bar",
