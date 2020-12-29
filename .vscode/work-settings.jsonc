@@ -16,7 +16,7 @@
     "svn.enableProposedApi": "none",
 
     "python.sortImports.args": [
-        "-lai=1",   // Lines after import
+        "--lai=1",   // Lines after import
         "-m=3",     // Format for multi line output
         "-w=115"
     ],
