@@ -22,5 +22,5 @@ print('')
 end
 
 define loadgef
-    source /mnt/d/jmcker/.gdbinit-gef.py
+    source ~/.gdb/gef.py
 end
