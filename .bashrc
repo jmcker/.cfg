@@ -235,7 +235,7 @@ if hostname | grep "cs.purdue.edu" &> /dev/null; then
 fi
 
 # Load work specific files
-if [ -f ".workrc" ]; then
+if [ -f "${HOME}/.workrc" ]; then
     source ${HOME}/.workrc
 fi
 
