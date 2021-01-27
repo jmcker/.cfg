@@ -34,7 +34,7 @@ function key-gen {
         mkdir "${HOME}/.ssh"
     fi
 
-    KEY_FILE="${HOME}/.ssh/${NICKNAME:-${TARGETNAME}}${RING}.key"
+    KEY_FILE="~/.ssh/${NICKNAME:-${TARGETNAME}}${RING}.key"
 
     echo -e "${YELLOW}-------- Generating ${KEYTYPE} key for ${USERNAME}@${TARGETNAME} --------${NC}"
     echo "It is highly recommended, albeit not required, that you use a password."
@@ -367,13 +367,13 @@ if [ "${GITHUB}" == "true" ]; then
     key-gen
 
     echo
-    echo "-- Enter your GitHub password --"
-    echo "Your password will be used to authenticate to the GitHub API and add the SSH key."
-    echo "If you prefer to do this yourself, leave the password blank."
-    read -r -s -p "Password: " GITHUB_PASSWORD
+    echo "-- Enter your GitHub Personal Access Token --"
+    echo "Your token will be used to authenticate to the GitHub API and add the SSH key."
+    echo "If you prefer to do this yourself, leave the field blank."
+    read -r -s -p "Access token: " GITHUB_TOKEN
     echo
 
-    if [ ! -z "${GITHUB_PASSWORD}" ]; then
+    if [ ! -z "${GITHUB_TOKEN}" ]; then
 
         echo
         echo -e "${YELLOW}-------- Adding SSH key to GitHub via GitHub API --------${NC}"
@@ -381,7 +381,7 @@ if [ "${GITHUB}" == "true" ]; then
 
         curl --fail --request POST \
         --data '{"title": "'"install-key-${HOSTNAME}"'", "key": "'"$(cat ${KEY_FILE}.pub)"'"}' \
-        https://api.github.com/user/keys -K- <<< "-u ${USERNAME}:${GITHUB_PASSWORD}"
+        https://api.github.com/user/keys -K- <<< "-u ${USERNAME}:${GITHUB_TOKEN}"
 
         if [ ${?} -ne 0 ]; then
             echo
@@ -392,7 +392,7 @@ if [ "${GITHUB}" == "true" ]; then
             echo "Press [Enter] to continue."
 
             # Let manual mode run
-            GITHUB_PASSWORD=""
+            GITHUB_TOKEN=""
 
             read
         fi
@@ -400,7 +400,7 @@ if [ "${GITHUB}" == "true" ]; then
         echo
     fi
 
-    if [ -z "${GITHUB_PASSWORD}" ]; then
+    if [ -z "${GITHUB_TOKEN}" ]; then
 
         dump-public-key
 
@@ -504,7 +504,6 @@ fi
 echo
 
 CONFIG="
-
 Host ${NICKNAME:-${TARGETNAME}}
     Hostname ${TARGETNAME}
     IdentityFile ${KEY_FILE}
