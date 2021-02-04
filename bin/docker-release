@@ -1,65 +1,107 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-set -e
+import argparse
+import os
+import sys
+import textwrap
 
-OWNER="${1}"
-IMAGE="${2}"
-VERSION="${3}"
-REPO="${4}"
+try:
+    import sh
+except Exception as e:
+    print('''Could not import 'sh':''')
+    print(e)
+    print('')
+    print('''Install using 'pip install sh' or 'apt install python3-pip' ''')
+    exit(1)
 
-usage() {
-    echo
-    echo "docker-release OWNER IMAGE VERSION [REPOSITORY]"
-}
+DOCKER_HUB_TOKEN_FILE = 'DOCKER_HUB_TOKEN.secret'
+GITHUB_TOKEN_FILE = 'DOCKER_GH_TOKEN.secret'
 
-secret_folder="$(realpath ~/.secret)"
-perms="$(stat -c '%a' ${secret_folder})"
-if [ "${perms}" != "700" ]; then
-    echo "Permissions ${perms} on ~/.secret (${secret_folder}) are too open."
-    echo "Must be 700. Refusing to continue."
+def main():
 
-    exit 1
-fi
+    description = 'Release a docker image to Docker Hub and GitHub with a variety of tags'
+    help_text = textwrap.dedent('''\
+    ''')
 
-if [ -z "${OWNER}" ]; then
-    echo "Missing OWNER"
-    usage
-    exit 1
-fi
+    parser = argparse.ArgumentParser(
+        'docker-release',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=description,
+        epilog=help_text
+    )
+    parser.add_argument('owner', action='store', help='Docker Hub image owner')
+    parser.add_argument('image_name', action='store', help='Image name')
+    parser.add_argument('version', action='store', help='Image version')
+    parser.add_argument('--repo', dest='gh_repo', action='store', default=None, help='GitHub repository name')
+    parser.add_argument('--docker-hub-user', dest='dh_user', action='store', default='jmcker', help='Docker Hub username')
+    parser.add_argument('--github-user-name', dest='gh_user', action='store', default='jmcker', help='GitHub username')
+    parser.add_argument('--source', dest='source_tag', action='store', default='latest', help='Local tag from which other tags should be created')
+    parser.add_argument('--latest', dest='include_latest', action='store_true', help='''Push to the 'latest' tag''')
+    parser.add_argument('--secrets', dest='secrets_dir', action='store', default=os.path.expanduser('~/.secret'), help='Directory containing Docker Hub and GitHub tokens')
+    parser.add_argument('--local', '--no-push', dest='local', action='store_true', help='Tag and print console output but do not push')
 
-if [ -z "${IMAGE}" ]; then
-    echo "Missing IMAGE"
-    usage
-    exit 1
-fi
+    args = parser.parse_args()
 
-if [ -z "${VERSION}" ]; then
-    echo "Missing VERSION"
-    usage
-    exit 1
-fi
+    do_github = args.gh_repo is not None
 
-docker tag ${OWNER}/${IMAGE} ${OWNER}/${IMAGE}:${VERSION}
+    os.makedirs(args.secrets_dir, mode=0o700, exist_ok=True)
+    os.chmod(args.secrets_dir, 0o700)
 
-# DockerHub
-cat ~/.secret/DOCKER_HUB_TOKEN.secret | docker login docker.io -u jmcker --password-stdin
+    for file_name in [DOCKER_HUB_TOKEN_FILE, GITHUB_TOKEN_FILE]:
+        file_path = os.path.join(args.secrets_dir, file_name)
+        if (not os.path.isfile(file_path)):
+            print(f'''Missing secret file '{file_path}' ''')
+            exit(1)
 
-docker push docker.io/${OWNER}/${IMAGE}:latest
-docker push docker.io/${OWNER}/${IMAGE}:${VERSION}
+    to_tags = []
 
-docker logout docker.io
+    if (args.include_latest):
+        to_tags.append('latest')
 
-# GitHub
-if [ ! -z "${REPO}" ]; then
+    # Make all the major/minor sub versions
+    # 5.4.3 -> 5, 5.4, 5.4.3
+    version_parts = args.version.split('.')
+    for i in range(len(version_parts)):
+        to_tags.append('.'.join(version_parts[:i + 1]))
 
-    cat ~/.secret/DOCKER_GH_TOKEN.secret | docker login docker.pkg.github.com -u jmcker --password-stdin
+    print('Logging into Docker...')
+    sh.docker.login(sh.cat(os.path.join(args.secrets_dir, DOCKER_HUB_TOKEN_FILE)), 'docker.io', '-u', args.dh_user, '--password-stdin')
 
-    docker tag ${OWNER}/${IMAGE} docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:latest
-    docker tag ${OWNER}/${IMAGE} docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:${VERSION}
+    if (do_github):
+        print('Logging into GitHub...')
+        sh.docker.login(sh.cat(os.path.join(args.secrets_dir, GITHUB_TOKEN_FILE)), 'docker.pkg.github.com', '-u', args.gh_user, '--password-stdin')
 
-    docker push docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:latest
-    docker push docker.pkg.github.com/${OWNER}/${REPO}/${IMAGE}:${VERSION}
+    for tag in to_tags:
 
-    docker logout docker.pkg.github.com
+        tag_dh = f'{args.owner}/{args.image_name}:{tag}'
+        tag_gh = f'docker.pkg.github.com/{args.owner}/{args.gh_repo}/{args.image_name}:{tag}'
 
-fi
+        print(f'Tagging {tag_dh}')
+        sh.docker.tag(f'{args.owner}/{args.image_name}:{args.source_tag}', tag_dh)
+        if (do_github):
+            print(f'Tagging {tag_gh}')
+            sh.docker.tag(f'{args.owner}/{args.image_name}:{args.source_tag}', tag_gh)
+
+    for tag in to_tags:
+
+        tag_dh = f'docker.io/{args.owner}/{args.image_name}:{tag}'
+        tag_gh = f'docker.pkg.github.com/{args.owner}/{args.gh_repo}/{args.image_name}:{tag}'
+
+        print('')
+        print(f'Pushing {tag_dh}')
+        if (not args.local):
+            sh.docker.push(tag_dh, _out=sys.stdout, _err=sys.stderr)
+            if (do_github):
+                print('')
+                print(f'Pushing {tag_gh}')
+                sh.docker.push(tag_gh, _out=sys.stdout, _err=sys.stderr)
+        else:
+            print('Skipping push')
+
+    print('Logging out...')
+    sh.docker.logout('docker.io')
+    if (do_github):
+        sh.docker.logout('docker.pkg.github.com')
+
+if (__name__ == '__main__'):
+    main()
