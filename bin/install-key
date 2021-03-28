@@ -34,7 +34,7 @@ function key-gen {
         mkdir "${HOME}/.ssh"
     fi
 
-    KEY_FILE="~/.ssh/${NICKNAME:-${TARGETNAME}}${RING}.key"
+    KEY_FILE="${HOME}/.ssh/${NICKNAME:-${TARGETNAME}}${RING}.key"
 
     echo -e "${YELLOW}-------- Generating ${KEYTYPE} key for ${USERNAME}@${TARGETNAME} --------${NC}"
     echo "It is highly recommended, albeit not required, that you use a password."
@@ -506,7 +506,7 @@ echo
 CONFIG="
 Host ${NICKNAME:-${TARGETNAME}}
     Hostname ${TARGETNAME}
-    IdentityFile ${KEY_FILE}
+    IdentityFile ${KEY_FILE/#${HOME}/\~}
     Port ${PORT:-22}
     User ${USERNAME}
 "
