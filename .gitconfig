@@ -24,6 +24,7 @@
     #templateDir = ~/.git-templates
 [svn]
     rmdir = true
+    pushmergeinfo = true
 
 # Detect Purdue
 [includeIf "gitdir:/homes/"]
