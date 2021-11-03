@@ -152,6 +152,23 @@ nmap() {
     fi
 }
 
+find-new-host() {
+    cidr=$(ip route | awk '/\/[0-9]/ {print $2}' | grep $(ip route | awk '/default/ {print $4}' | sed 's/.[0-9]$//'))
+    echo
+    echo "Unplug the device and press any key to continue..."
+    read
+
+    echo "Recording NMAP scan of ${cidr}..."
+    before=$(nmap -sn "${cidr}" | grep "scan report")
+    echo
+    echo "Plug in the device and press any key to continue..."
+    read
+    after=$(nmap -sn "${cidr}" | grep "scan report")
+    echo "Diff:"
+    echo
+    diff <(echo "${before}") <(echo "${after}")
+}
+
 # Test for DNNSEC validation
 # Can provide @X.X.X.X as an arg to test non-default DNS server
 test-dnssec() {
