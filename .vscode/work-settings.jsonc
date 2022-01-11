@@ -21,8 +21,10 @@
 
     "typescript.preferences.quoteStyle": "single",
     "typescript.format.semicolons": "insert",
+    "typescript.updateImportsOnFileMove.enabled": "always",
     "javascript.preferences.quoteStyle": "single",
     "javascript.format.semicolons": "insert",
+    "javascript.updateImportsOnFileMove.enabled": "always",
 
     "remote.SSH.showLoginTerminal": true,
 
@@ -35,6 +37,7 @@
         "-w=115"
     ],
 
+    "cSpell.enabled": true,
     "cSpell.enabledLanguageIds": [
         "asciidoc",
         "c",
@@ -91,6 +94,5 @@
                 "/#include.*/"
             ]
         }
-    ],
-    "cSpell.enabled": true
+    ]
 }

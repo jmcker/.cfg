@@ -5,10 +5,24 @@
 
     "files.eol": "\n",
     "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "files.exclude": {
+        "**/__pycache__": true,
+        "**/.env": true,
         "**/env": true,
         "**/node_modules": true
     },
+    "files.associations": {
+        "*.sdam": "json",
+        "*.pyx": "python",
+        "*.yml.j2": "yaml"
+    },
+
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.format.semicolons": "insert",
+    "javascript.preferences.quoteStyle": "single",
+    "javascript.format.semicolons": "insert",
 
     "terminal.integrated.shell.windows": "C:\\Windows\\System32\\bash.exe",
     "remote.SSH.showLoginTerminal": false,
@@ -20,6 +34,7 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
 
     "python.sortImports.args": [
+        "--src=${workspaceFolder}",
         "--lai=1",   // Lines after import
         "-m=3",     // Format for multi line output
         "-w=115"
@@ -30,6 +45,7 @@
 
     "cmake.configureOnOpen": false,
 
+    "cSpell.enabled": true,
     "cSpell.enabledLanguageIds": [
         "asciidoc",
         "c",
