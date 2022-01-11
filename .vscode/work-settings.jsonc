@@ -5,18 +5,32 @@
 
     "files.eol": "\n",
     "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "files.exclude": {
+        "**/__pycache__": true,
+        "**/.env": true,
         "**/env": true,
         "**/node_modules": true
     },
+    "files.associations": {
+        "*.sdam": "json",
+        "*.pyx": "python",
+        "*.yml.j2": "yaml"
+    },
 
-    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.format.semicolons": "insert",
+    "javascript.preferences.quoteStyle": "single",
+    "javascript.format.semicolons": "insert",
+
     "remote.SSH.showLoginTerminal": true,
 
     "svn.enableProposedApi": "none",
 
     "python.sortImports.args": [
-        "--lai=1",   // Lines after import
+        "--src=${workspaceFolder}",
+        "--lai=2",   // Lines after import
         "-m=3",     // Format for multi line output
         "-w=115"
     ],
@@ -55,12 +69,7 @@
         "yaml",
         "yml"
     ],
-    "cSpell.userWords": [
-        "expts",
-        "oceancomm",
-        "postgres",
-        "simo"
-    ],
+    "cSpell.userWords": [],
     "cSpell.languageSettings": [
         {
             "languageId": "python,powershell",
@@ -82,5 +91,6 @@
                 "/#include.*/"
             ]
         }
-    ]
+    ],
+    "cSpell.enabled": true
 }
