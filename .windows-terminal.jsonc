@@ -35,8 +35,8 @@
         {
             "startingDirectory": "%HOME%",
             "snapOnInput": true, // Jump to the bottom when typing
-            "scrollbarState": "hidden",
-            "historySize": 9001,
+            // "scrollbarState": "hidden",
+            "historySize": 20000,
             "closeOnExit": "always",
             "colorScheme": "Campbell",
             "padding": "0, 0, 0, 0",
@@ -67,6 +67,12 @@
                 "source": "Windows.Terminal.Wsl",
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "startingDirectory": "%HOME%"
+            },
+            {
+                "name": "Git Bash",
+                "guid": "{00000000-0000-0000-ba54-000000000002}",
+                "commandline": "%PROGRAMFILES%/git/usr/bin/bash.exe -i -l",
+                "icon": "%PROGRAMFILES%/Git/mingw64/share/git/git-for-windows.ico"
             },
             {
                 "name": "Azure Cloud Shell",
