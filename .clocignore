@@ -17,3 +17,9 @@ x64/Release
 build
 build-.*
 \.vscode
+.*.xml
+Debug
+Release
+ti_products
+branches
+tags
